@@ -106,6 +106,7 @@ export default class FormElementsEdit extends React.Component {
     }
 
     const this_checked = this.props.element.hasOwnProperty('required') ? this.props.element.required : false;
+    const this_default_checked = this.props.element.hasOwnProperty('defaultChecked') ? this.props.element.defaultChecked : false;
     const this_read_only = this.props.element.hasOwnProperty('readOnly') ? this.props.element.readOnly : false;
     const this_default_today = this.props.element.hasOwnProperty('defaultToday') ? this.props.element.defaultToday : false;
     const this_show_time_select = this.props.element.hasOwnProperty('showTimeSelect') ? this.props.element.showTimeSelect : false;
@@ -135,7 +136,7 @@ export default class FormElementsEdit extends React.Component {
     if (this.props.element.hasOwnProperty('label')) {
       editorState = this.convertFromHTML(this.props.element.label);
     }
-
+    console.log(this.props);
     return (
       <div>
         <div className="clearfix">
@@ -223,6 +224,14 @@ export default class FormElementsEdit extends React.Component {
                 <input id="show-time-input" className="custom-control-input" type="checkbox" checked={this_show_time_input} value={true} onChange={this.editElementProp.bind(this, 'showTimeInput', 'checked')} />
                 <label className="custom-control-label" htmlFor="show-time-input">
                 <IntlMessages id="show-time-input" />?
+                </label>
+              </div>
+            }
+            { (['Checkboxes', 'Checkbox'].indexOf(this.state.element.element) !== -1) &&
+              <div className="custom-control custom-checkbox">
+                <input id="display-horizontal" className="custom-control-input" type="checkbox" checked={this_default_checked} value={true} onChange={this.editElementProp.bind(this, 'defaultChecked', 'checked')} />
+                <label className="custom-control-label" htmlFor="display-horizontal">
+                  <IntlMessages id="default-checked" />
                 </label>
               </div>
             }
@@ -396,6 +405,14 @@ export default class FormElementsEdit extends React.Component {
             </div>
           </div>
         }
+
+        { this.props.element.showPlaceholder &&
+          <div className="form-group">
+            <label className="control-label" htmlFor="placeholder"><IntlMessages id="place-holder-text-label" /></label>
+            <TextAreaAutosize type="text" className="form-control" id="placeholder" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
+          </div>
+        }
+
         { this.props.element.showDescription &&
           <div className="form-group">
             <label className="control-label" htmlFor="questionDescription"><IntlMessages id="description" /></label>

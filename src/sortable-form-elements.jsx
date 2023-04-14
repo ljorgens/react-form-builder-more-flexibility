@@ -6,7 +6,7 @@ import CustomElement from './form-elements/custom-element';
 
 const {
   Header, Paragraph, Label, LineBreak, TextInput, EmailInput, PhoneNumber, NumberInput, TextArea, Dropdown, Checkboxes,
-  DatePicker, RadioButtons, Image, Rating, Tags, Signature, HyperLink, Download, Camera, Range, FileUpload,
+  DatePicker, RadioButtons, Image, Rating, Tags, Signature, HyperLink, Download, Camera, Range, FileUpload, Checkbox
 } = BaseFormElements;
 
 const FormElements = {};
@@ -23,6 +23,7 @@ FormElements.TextArea = SortableElement(TextArea);
 FormElements.Dropdown = SortableElement(Dropdown);
 FormElements.Signature = SortableElement(Signature);
 FormElements.Checkboxes = SortableElement(Checkboxes);
+FormElements.Checkbox = SortableElement(Checkbox);
 FormElements.DatePicker = SortableElement(DatePicker);
 FormElements.RadioButtons = SortableElement(RadioButtons);
 FormElements.Image = SortableElement(Image);

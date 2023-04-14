@@ -77,8 +77,8 @@ class Toolbar extends React.Component {
       case 'Checkboxes':
         return [
           { value: 'place_holder_option_1', text: intl.formatMessage({ id: 'place-holder-option-1' }), key: `checkboxes_option_${ID.uuid()}` },
-          { value: 'place_holder_option_2', text: intl.formatMessage({ id: 'place-holder-option-2' }), key: `checkboxes_option_${ID.uuid()}` },
-          { value: 'place_holder_option_3', text: intl.formatMessage({ id: 'place-holder-option-3' }), key: `checkboxes_option_${ID.uuid()}` },
+          // { value: 'place_holder_option_2', text: intl.formatMessage({ id: 'place-holder-option-2' }), key: `checkboxes_option_${ID.uuid()}` },
+          // { value: 'place_holder_option_3', text: intl.formatMessage({ id: 'place-holder-option-3' }), key: `checkboxes_option_${ID.uuid()}` },
         ];
       case 'RadioButtons':
         return [
@@ -148,6 +148,14 @@ class Toolbar extends React.Component {
         options: [],
       },
       {
+        key: 'Checkbox',
+        canHaveAnswer: true,
+        name: intl.formatMessage({ id: 'checkbox' }),
+        icon: 'far fa-check-square',
+        label: intl.formatMessage({ id: 'place-holder-label' }),
+        field_name: 'checkbox_'
+      },
+      {
         key: 'RadioButtons',
         canHaveAnswer: true,
         name: intl.formatMessage({ id: 'multiple-choice' }),
@@ -171,6 +179,7 @@ class Toolbar extends React.Component {
         label: intl.formatMessage({ id: 'place-holder-email' }),
         icon: 'fas fa-envelope',
         field_name: 'email_input_',
+        placeholder: ''
       },
       {
         key: 'NumberInput',
@@ -333,10 +342,11 @@ class Toolbar extends React.Component {
 
   create(item) {
     const { intl } = this.props;
+    const element = item.element || item.key;
 
     const elementOptions = {
       id: ID.uuid(),
-      element: item.element || item.key,
+      element: element,
       text: item.name,
       group_name: item.group_name,
       static: item.static,
@@ -348,6 +358,11 @@ class Toolbar extends React.Component {
       elementOptions.showDescription = true;
     }
 
+    // add placeholder to form input
+    if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber'].indexOf(element) !== -1) {
+      elementOptions.showPlaceholder = true;
+    }
+
     if (item.type === 'custom') {
       elementOptions.key = item.key;
       elementOptions.custom = true;
@@ -357,7 +372,6 @@ class Toolbar extends React.Component {
       elementOptions.component = item.component || null;
       elementOptions.custom_options = item.custom_options || [];
     }
-
     if (item.static) {
       elementOptions.bold = false;
       elementOptions.italic = false;

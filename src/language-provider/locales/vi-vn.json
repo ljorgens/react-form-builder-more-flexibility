@@ -52,6 +52,8 @@
   "dropdown" : "Danh sách chọn",
   "tags": "Thẻ",
   "checkboxes" : "Hộp chọn",
+  "checkbox": "Hộp chọn",
+  "default-checked": "Hộp chọn",
   "multiple-choice":"Nhiều lựa chọn",
   "text-input":"Nhập chữ",
   "number-input":"Nhập số",
@@ -69,6 +71,7 @@
   "camera":"Tải ảnh",
   "place-holder-text": "Nội dung...",
   "place-holder-label": "Nhãn",
+  "place-holder-text-label": "Điền vào chỗ trống.",
   "place-holder-website-link": "Đường dẫn tới website...",
   "place-holder-file-name": "Tên tệp...",
   "easy": "Easy",
@@ -79,5 +82,5 @@
   "message.is-required": "không được bỏ trống",
   "message.was-answered incorrectly": "đã trả lời sai",
   "message.was-not-registered": "chưa đăng ký"
-  
+
 }

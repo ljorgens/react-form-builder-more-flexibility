@@ -94,6 +94,7 @@ class TextInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder;
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -129,6 +130,7 @@ class EmailInput extends React.Component {
     props.type = 'text';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder;
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -164,6 +166,7 @@ class PhoneNumber extends React.Component {
     props.type = 'tel';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    props.placeholder = this.props.data.placeholder;
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -199,7 +202,7 @@ class NumberInput extends React.Component {
     props.type = 'number';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-
+    props.placeholder = this.props.data.placeholder;
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -234,7 +237,7 @@ class TextArea extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-
+    console.log(this.props);
     if (this.props.read_only) {
       props.disabled = 'disabled';
     }
@@ -463,6 +466,45 @@ class Checkboxes extends React.Component {
               </div>
             );
           })}
+        </div>
+      </div>
+    );
+  }
+}
+
+class Checkbox extends React.Component {
+  constructor(props) {
+    super(props);
+    this.inputField = React.createRef();
+  }
+
+  render() {
+    let classNames = 'custom-control custom-checkbox';
+    if (this.props.data.inline) { classNames += ' option-inline'; }
+
+    let baseClasses = 'SortableItem rfb-item';
+    if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
+    const props = {};
+    // eslint-disable-next-line no-undef
+    props.name = this.props.data.field_name;
+    props.type = 'checkbox';
+    props.defaultChecked = this.props.data.defaultChecked;
+    if (this.props.mutable) {
+      props.ref = this.inputField;
+    }
+    if (this.props.read_only) {
+      props.disabled = 'disabled';
+    }
+
+    return (
+      <div style={{ ...this.props.style }} className={baseClasses}>
+        <ComponentHeader {...this.props} />
+        <div className="form-group">
+          <ComponentLabel className="form-label" {...this.props} />
+          <div className={classNames}>
+            <input id={this.props.data.field_name} className="custom-control-input" {...props} />
+            <label className="custom-control-label" htmlFor={this.props.data.field_name}>{this.props.data.text}</label>
+          </div>
         </div>
       </div>
     );
@@ -897,7 +939,7 @@ class Range extends React.Component {
     if (this.props.read_only) {
       props.disabled = 'disabled';
     }
-    
+
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
 
@@ -938,6 +980,7 @@ FormElements.TextArea = TextArea;
 FormElements.Dropdown = Dropdown;
 FormElements.Signature = Signature;
 FormElements.Checkboxes = Checkboxes;
+FormElements.Checkbox = Checkbox;
 FormElements.DatePicker = DatePicker;
 FormElements.RadioButtons = RadioButtons;
 FormElements.Image = Image;
