@@ -237,7 +237,7 @@ class TextArea extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
-    console.log(this.props);
+    props.placeholder = this.props.data.placeholder;
     if (this.props.read_only) {
       props.disabled = 'disabled';
     }
@@ -479,8 +479,8 @@ class Checkbox extends React.Component {
   }
 
   render() {
-    let classNames = 'custom-control custom-checkbox';
-    if (this.props.data.inline) { classNames += ' option-inline'; }
+    const classNames = 'custom-control custom-checkbox';
+    // if (this.props.data.inline) { classNames += ' option-inline'; }
 
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
@@ -503,7 +503,7 @@ class Checkbox extends React.Component {
           <ComponentLabel className="form-label" {...this.props} />
           <div className={classNames}>
             <input id={this.props.data.field_name} className="custom-control-input" {...props} />
-            <label className="custom-control-label" htmlFor={this.props.data.field_name}>{this.props.data.text}</label>
+            <label className="custom-control-label" htmlFor={this.props.data.field_name}>{this.props.data.boxLabel}</label>
           </div>
         </div>
       </div>

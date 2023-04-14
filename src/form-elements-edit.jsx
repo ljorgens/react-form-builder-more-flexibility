@@ -136,7 +136,10 @@ export default class FormElementsEdit extends React.Component {
     if (this.props.element.hasOwnProperty('label')) {
       editorState = this.convertFromHTML(this.props.element.label);
     }
-    console.log(this.props);
+    if (this.props.element.hasOwnProperty('boxLabel')) {
+      editorState = this.convertFromHTML(this.props.element.boxLabel);
+    }
+    console.log(this.props.element);
     return (
       <div>
         <div className="clearfix">
@@ -243,6 +246,18 @@ export default class FormElementsEdit extends React.Component {
                 </label>
               </div>
             }
+          </div>
+        }
+        {this.state.element.element === 'Checkbox' &&
+          <div className="form-group">
+            <label className="control-label"><IntlMessages id="checkbox-label-text" />:</label>
+
+            <Editor
+              toolbar={toolbar}
+              defaultEditorState={editorState}
+              onBlur={this.updateElement.bind(this)}
+              onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'boxLabel')}
+              stripPastedStyles={true} />
           </div>
         }
         { this.props.element.hasOwnProperty('src') &&

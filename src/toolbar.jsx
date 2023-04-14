@@ -153,7 +153,8 @@ class Toolbar extends React.Component {
         name: intl.formatMessage({ id: 'checkbox' }),
         icon: 'far fa-check-square',
         label: intl.formatMessage({ id: 'place-holder-label' }),
-        field_name: 'checkbox_'
+        field_name: 'checkbox_',
+        boxLabel: 'Agree To Rules & Regs',
       },
       {
         key: 'RadioButtons',
@@ -359,7 +360,7 @@ class Toolbar extends React.Component {
     }
 
     // add placeholder to form input
-    if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber'].indexOf(element) !== -1) {
+    if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber', 'TextArea'].indexOf(element) !== -1) {
       elementOptions.showPlaceholder = true;
     }
 
