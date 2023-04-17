@@ -159,6 +159,12 @@ class ReactForm extends React.Component {
         }
       });
       itemData.value = checked_options;
+    } else if (item.element === 'Checkbox') {
+      if (!ref || !ref.inputField || !ref.inputField.current) {
+        itemData.value = false;
+      } else {
+        itemData.value = ref.inputField.current.checked;
+      }
     } else {
       if (!ref) return null;
       itemData.value = this._getItemValue(item, ref).value;
@@ -206,7 +212,9 @@ class ReactForm extends React.Component {
     if (errors.length < 1) {
       const { onSubmit } = this.props;
       if (onSubmit) {
+        console.log(this.props.data);
         const data = this._collectFormData(this.props.data);
+        console.log(data);
         onSubmit(data);
       } else {
         const $form = ReactDOM.findDOMNode(this.form);
@@ -370,7 +378,7 @@ class ReactForm extends React.Component {
         case 'Rating':
         case 'Tags':
         case 'Range':
-        case 'CheckBox':
+        case 'Checkbox':
           return this.getInputElement(item);
         case 'CustomElement':
           return this.getCustomElement(item);
