@@ -370,6 +370,7 @@ class ReactForm extends React.Component {
         case 'Rating':
         case 'Tags':
         case 'Range':
+        case 'CheckBox':
           return this.getInputElement(item);
         case 'CustomElement':
           return this.getCustomElement(item);
