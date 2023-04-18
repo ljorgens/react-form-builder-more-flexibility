@@ -180,7 +180,7 @@ class Toolbar extends React.Component {
         label: intl.formatMessage({ id: 'place-holder-email' }),
         icon: 'fas fa-envelope',
         field_name: 'email_input_',
-        placeholder: ''
+        placeholder: '',
       },
       {
         key: 'NumberInput',
@@ -377,6 +377,8 @@ class Toolbar extends React.Component {
       elementOptions.bold = false;
       elementOptions.italic = false;
     }
+
+    elementOptions.custom_name = item.custom_name;
 
     if (item.canHaveAnswer) { elementOptions.canHaveAnswer = item.canHaveAnswer; }
 

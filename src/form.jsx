@@ -212,9 +212,7 @@ class ReactForm extends React.Component {
     if (errors.length < 1) {
       const { onSubmit } = this.props;
       if (onSubmit) {
-        console.log(this.props.data);
         const data = this._collectFormData(this.props.data);
-        console.log(data);
         onSubmit(data);
       } else {
         const $form = ReactDOM.findDOMNode(this.form);
