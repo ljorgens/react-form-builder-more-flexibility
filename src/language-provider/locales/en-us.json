@@ -91,6 +91,7 @@
   "easy": "Easy",
   "difficult": "Difficult",
   "drop-zone": "Dropzone",
+  "custom-name-label": "A Name To Give This Input That Will Show Up In Data Retrieval",
 
   "message.is-required": "is required",
   "message.was-answered-incorrectly": "was answered incorrectly",

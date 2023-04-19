@@ -424,7 +424,14 @@ export default class FormElementsEdit extends React.Component {
         { this.props.element.showPlaceholder &&
           <div className="form-group">
             <label className="control-label" htmlFor="placeholder"><IntlMessages id="place-holder-text-label" /></label>
-            <TextAreaAutosize type="text" className="form-control" id="placeholder" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
+            <input type="text" className="form-control" id="placeholder" defaultValue={this.props.element.placeholder} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'placeholder', 'value')} />
+          </div>
+        }
+
+        { this.props.element.show_custom_name &&
+          <div className="form-group">
+            <label className="control-label" htmlFor="custom_name"><IntlMessages id="custom-name-label" /></label>
+            <input type="text" className="form-control" id="custom_name" defaultValue={this.props.element.custom_name} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'custom_name', 'value')} />
           </div>
         }
 

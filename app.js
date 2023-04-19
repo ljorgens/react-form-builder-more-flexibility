@@ -56,7 +56,7 @@ const saveUrl = '/api/formdata';
 //     group_name: 'Multi Column Row',
 //     key: 'FiveColumnRow',
 //     element: 'MultiColumnRow',
-//   },  
+//   },
 //   {
 //     group_name: 'Multi Column Row',
 //     key: 'SixColumnRow',

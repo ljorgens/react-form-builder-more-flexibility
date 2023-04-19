@@ -377,7 +377,7 @@ class Toolbar extends React.Component {
       elementOptions.bold = false;
       elementOptions.italic = false;
     }
-
+    elementOptions.show_custom_name = item.show_custom_name;
     elementOptions.custom_name = item.custom_name;
 
     if (item.canHaveAnswer) { elementOptions.canHaveAnswer = item.canHaveAnswer; }

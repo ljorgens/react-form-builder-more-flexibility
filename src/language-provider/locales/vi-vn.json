@@ -79,6 +79,7 @@
   "difficult": "Difficult",
 
   "drop-zone": "Khu vực kéo thả",
+  "custom-name-label": "A Name To Give This Input That Will Show Up In Data Retrieval",
 
   "message.is-required": "không được bỏ trống",
   "message.was-answered incorrectly": "đã trả lời sai",
