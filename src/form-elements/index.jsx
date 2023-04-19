@@ -503,7 +503,7 @@ class Checkbox extends React.Component {
           <ComponentLabel className="form-label" {...this.props} />
           <div className={classNames}>
             <input id={this.props.data.field_name} className="custom-control-input" {...props} />
-            <label className="custom-control-label" htmlFor={this.props.data.field_name}>{this.props.data.boxLabel}</label>
+            <label className="custom-control-label" htmlFor={this.props.data.field_name} dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}/>
           </div>
         </div>
       </div>
