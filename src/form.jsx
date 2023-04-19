@@ -294,17 +294,18 @@ class ReactForm extends React.Component {
       key={`form_${item.id}`}
       data={item}
       read_only={this.props.read_only}
+      hide_required_alert={this.props.hide_required_alert}
       defaultValue={this._getDefaultValue(item)} />);
   }
 
   getContainerElement(item, Element) {
     const controls = item.childItems.map(x => (x ? this.getInputElement(this.getDataById(x)) : <div>&nbsp;</div>));
-    return (<Element mutable={true} key={`form_${item.id}`} data={item} controls={controls} />);
+    return (<Element mutable={true} key={`form_${item.id}`} data={item} controls={controls} hide_required_alert={this.props.hide_required_alert} />);
   }
 
   getSimpleElement(item) {
     const Element = FormElements[item.element];
-    return (<Element mutable={true} key={`form_${item.id}`} data={item} />);
+    return (<Element mutable={true} key={`form_${item.id}`} data={item} hide_required_alert={this.props.hide_required_alert} />);
   }
 
   getCustomElement(item) {
@@ -326,6 +327,7 @@ class ReactForm extends React.Component {
       <CustomElement
         mutable={true}
         read_only={this.props.read_only}
+        hide_required_alert={this.props.hide_required_alert}
         key={`form_${item.id}`}
         data={item}
         {...inputProps}
@@ -389,13 +391,13 @@ class ReactForm extends React.Component {
         case 'Signature':
           return <Signature ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only || item.readOnly} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._getDefaultValue(item)} />;
         case 'Checkboxes':
-          return <Checkboxes ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._optionsDefaultValue(item)} />;
+          return <Checkboxes ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._optionsDefaultValue(item)} hide_required_alert={this.props.hide_required_alert} />;
         case 'Image':
-          return <Image ref={c => this.inputs[item.field_name] = c} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._getDefaultValue(item)} />;
+          return <Image ref={c => this.inputs[item.field_name] = c} handleChange={this.handleChange} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._getDefaultValue(item)} hide_required_alert={this.props.hide_required_alert} />;
         case 'Download':
-          return <Download download_path={this.props.download_path} mutable={true} key={`form_${item.id}`} data={item} />;
+          return <Download download_path={this.props.download_path} mutable={true} key={`form_${item.id}`} data={item} hide_required_alert={this.props.hide_required_alert} />;
         case 'Camera':
-          return <Camera ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only || item.readOnly} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._getDefaultValue(item)} />;
+          return <Camera ref={c => this.inputs[item.field_name] = c} read_only={this.props.read_only || item.readOnly} mutable={true} key={`form_${item.id}`} data={item} defaultValue={this._getDefaultValue(item)} hide_required_alert={this.props.hide_required_alert} />;
           case 'FileUpload':
             return (
               <FileUpload
@@ -404,6 +406,7 @@ class ReactForm extends React.Component {
                 mutable={true}
                 key={`form_${item.id}`}
                 data={item}
+                hide_required_alert={this.props.hide_required_alert}
                 defaultValue={this._getDefaultValue(item)}
               />
             );
