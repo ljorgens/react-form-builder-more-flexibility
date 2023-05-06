@@ -406,11 +406,11 @@ class Toolbar extends React.Component {
       elementOptions.class_name = item.class_name;
     }
 
-    if (item.element === 'Image') {
+    if (element === 'Image') {
       elementOptions.src = item.src;
     }
 
-    if (item.element === 'DatePicker') {
+    if (element === 'DatePicker') {
       elementOptions.dateFormat = item.dateFormat;
       elementOptions.timeFormat = item.timeFormat;
       elementOptions.showTimeSelect = item.showTimeSelect;
@@ -418,12 +418,12 @@ class Toolbar extends React.Component {
       elementOptions.showTimeInput = item.showTimeInput;
     }
 
-    if (item.element === 'Download') {
+    if (element === 'Download') {
       elementOptions._href = item._href;
       elementOptions.file_path = item.file_path;
     }
 
-    if (item.element === 'Range') {
+    if (element === 'Range') {
       elementOptions.step = item.step;
       elementOptions.default_value = item.default_value;
       elementOptions.min_value = item.min_value;
@@ -432,7 +432,7 @@ class Toolbar extends React.Component {
       elementOptions.max_label = item.max_label;
     }
 
-    if (item.element === 'MultiColumnRow') {
+    if (element === 'MultiColumnRow') {
       elementOptions.col_count = item.col_count;
     }
 
