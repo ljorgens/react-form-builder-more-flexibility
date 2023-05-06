@@ -347,7 +347,7 @@ class Toolbar extends React.Component {
 
     const elementOptions = {
       id: ID.uuid(),
-      element: element,
+      element,
       text: item.name,
       group_name: item.group_name,
       static: item.static,

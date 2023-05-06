@@ -1,6 +1,6 @@
 {
   "name": "react-form-builder-more-flexibility",
-  "version": "1.0.9",
+  "version": "1.0.10",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
