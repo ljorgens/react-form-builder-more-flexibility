@@ -63,7 +63,7 @@ class Label extends React.Component {
     return (
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
-        <label className={classNames} dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }} />
+        <label className={`${classNames} form-label`} dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }}/>
       </div>
     );
   }
@@ -147,7 +147,7 @@ class EmailInput extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel {...this.props}/>
           <input {...props} />
         </div>
       </div>
@@ -183,7 +183,7 @@ class PhoneNumber extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel {...this.props}/>
           <input {...props} />
         </div>
       </div>
@@ -254,7 +254,7 @@ class TextArea extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel {...this.props} />
+          <ComponentLabel {...this.props}/>
           <textarea {...props} />
         </div>
       </div>
@@ -441,7 +441,7 @@ class Checkboxes extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel className="form-label" {...this.props} />
+          <ComponentLabel {...this.props} />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -529,7 +529,7 @@ class RadioButtons extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel className="form-label" {...this.props} />
+          <ComponentLabel {...this.props} />
           {this.props.data.options.map((option) => {
             const this_key = `preview_${option.key}`;
             const props = {};
@@ -625,7 +625,9 @@ class HyperLink extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <a target="_blank" href={this.props.data.href}>{this.props.data.content}</a>
+        <label className={'form-label'}>
+          <a target="_blank" href={this.props.data.href} dangerouslySetInnerHTML={{ __html: myxss.process(this.props.data.content) }}/>
+          </label>
         </div>
       </div>
     );

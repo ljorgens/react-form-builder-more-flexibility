@@ -66,16 +66,17 @@ function isContainer(item) {
 
 const Dustbin = React.forwardRef(
   ({
-    draggedItem, parentIndex, canDrop, isOver, isOverCurrent, connectDropTarget, items, col, getDataById, ...rest
+    onDropSuccess, seq, draggedItem, parentIndex, canDrop, isOver, isOverCurrent, connectDropTarget, items, col, getDataById, ...rest
   }, ref) => {
     const item = getDataById(items[col]);
     useImperativeHandle(
       ref,
       () => ({
         onDrop: (dropped) => {
+          console.log("dropped ites")
           const { data } = dropped;
           if (data) {
-            console.log('dropped', dropped);
+            onDropSuccess && onDropSuccess();
             store.dispatch('deleteLastItem');
           }
         },
@@ -99,6 +100,7 @@ const Dustbin = React.forwardRef(
     // console.log('sameCard, canDrop', sameCard, canDrop);
     return connectDropTarget(
       <div style={!sameCard ? getStyle(backgroundColor) : getStyle('rgba(0, 0, 0, .03') }>
+      {!element && <span>Drop your element here </span>}
         {element}
       </div>,
     );
@@ -113,6 +115,7 @@ export default DropTarget(
       monitor,
       component,
     ) {
+
       if (!component) {
         return;
       }
@@ -134,6 +137,7 @@ export default DropTarget(
 
       if (!isContainer(item)) {
         (component).onDrop(item);
+        console.log("calling on Drop from 137",item)
         if (item.data && typeof props.setAsChild === 'function') {
           const isNew = !item.data.id;
           const data = isNew ? item.onCreate(item.data) : item.data;
