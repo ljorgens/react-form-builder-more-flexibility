@@ -1,6 +1,6 @@
 {
   "name": "react-form-builder-more-flexibility",
-  "version": "1.0.12",
+  "version": "1.0.13",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -103,7 +103,8 @@
     "start": "webpack-dev-server --hot --mode development",
     "serve:api": "node server/index.js",
     "pretranspile": "rimraf lib",
-    "transpile": "babel --out-dir lib src --copy-files"
+    "transpile": "babel --out-dir lib src --copy-files",
+    "publish": "npm publish"
   },
   "bugs": {
     "url": "https://github.com/ljorgens/react-form-builder/issues"

@@ -4,35 +4,96 @@ import ReactDatePicker from 'react-datepicker';
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 
+// This is the utility function that will attempt to parse a date string
+// using several different formats until it finds one that works.
+function parseDate(dateStr, formatMask) {
+  const formats = [
+    'yyyy-MM-dd', // format updated
+    'MM/dd/yyyy',
+    formatMask,
+    // add any other formats you might need to support
+  ];
+
+  const date = formats.find((newFormat) => {
+    const parsedDate = parse(dateStr, newFormat, new Date());
+    return !Number.isNaN(parsedDate.getTime());
+  });
+
+  if (date) {
+    return parse(dateStr, date, new Date());
+  }
+  return null;
+}
+
 class DatePicker extends React.Component {
   constructor(props) {
     super(props);
     this.inputField = React.createRef();
 
     const { formatMask } = DatePicker.updateFormat(props, null);
-    this.state = DatePicker.updateDateTime(props, { formatMask }, formatMask);
+    const state = DatePicker.updateDateTime(props, { formatMask }, formatMask);
+
+    // Ensure state.value and state.internalValue are not undefined
+    state.value = state.value || '';
+    state.internalValue = state.internalValue || '';
+
+    this.state = state;
   }
 
-  // formatMask = '';
+  static updateDateTime(props, state, formatMask) {
+    let value;
+    let internalValue;
+    const { defaultToday } = props.data;
+    const iOSFormatMask = 'yyyy-MM-dd';
+    if (defaultToday && (props.defaultValue === '' || props.defaultValue === undefined)) {
+      const dateToFormat = new Date();
+      value = dateToFormat.toString() === 'Invalid Date' ? '' : format(dateToFormat, iOSFormatMask);
+      internalValue = dateToFormat.toString() === 'Invalid Date' ? '' : dateToFormat; // Ensure not undefined
+    } else {
+      value = props.defaultValue || ''; // Ensure not undefined
+      if (value === '') {
+        internalValue = '';
+      } else {
+        const parsedDate = parse(value, formatMask, new Date());
+        internalValue = parsedDate.toString() === 'Invalid Date' ? '' : parsedDate; // Ensure not undefined
+      }
+    }
+    return {
+      value,
+      internalValue,
+      placeholder: formatMask.toLowerCase(),
+      defaultToday,
+      formatMask,
+    };
+  }
 
   handleChange = (dt) => {
     let placeholder;
     const { formatMask } = this.state;
+    const iOSFormatMask = 'yyyy-MM-dd';
     if (dt && dt.target) {
       placeholder = (dt && dt.target && dt.target.value === '') ? formatMask.toLowerCase() : '';
-      const formattedDate = (dt.target.value) ? format(dt.target.value, formatMask) : '';
-      this.setState({
-        value: formattedDate,
-        internalValue: formattedDate,
-        placeholder,
-      });
-    } else {
-      this.setState({
-        value: (dt) ? format(dt, formatMask) : '',
-        internalValue: dt,
-        placeholder,
-      });
-    }
+      const dateValue = (dt.target.value) ? parseDate(dt.target.value, formatMask) : null;
+      if (dateValue && Number.isNaN(dateValue)) {
+        console.log('Invalid date:', dt.target.value);
+      } else {
+        const formattedDate = (dateValue) ? format(dateValue, iOSFormatMask) : '';
+        this.setState({
+          value: formattedDate,
+          internalValue: dateValue,
+          placeholder,
+        });
+      }
+    } else if (dt && Number.isNaN(dt)) {
+        console.log('Invalid date:', dt);
+      } else {
+        const formattedDate = (dt) ? format(dt, iOSFormatMask) : '';
+        this.setState({
+          value: formattedDate,
+          internalValue: dt,
+          placeholder,
+        });
+      }
   };
 
   static updateFormat(props, oldFormatMask) {
@@ -45,44 +106,10 @@ class DatePicker extends React.Component {
     return { updated, formatMask };
   }
 
-  static updateDateTime(props, state, formatMask) {
-    let value;
-    let internalValue;
-    const { defaultToday } = props.data;
-    if (defaultToday && (props.defaultValue === '' || props.defaultValue === undefined)) {
-      value = format(new Date(), formatMask);
-      internalValue = new Date();
-    } else {
-      value = props.defaultValue;
-
-      if (value === '' || value === undefined) {
-        internalValue = undefined;
-      } else {
-        internalValue = parse(value, state.formatMask, new Date());
-      }
-    }
-    return {
-      value,
-      internalValue,
-      placeholder: formatMask.toLowerCase(),
-      defaultToday,
-      formatMask: state.formatMask,
-    };
-  }
-
-  // componentWillReceiveProps(props) {
-  //   const formatUpdated = this.updateFormat(props);
-  //   if ((props.data.defaultToday !== !this.state.defaultToday) || formatUpdated) {
-  //     const state = this.updateDateTime(props, this.formatMask);
-  //     this.setState(state);
-  //   }
-  // }
-
   static getDerivedStateFromProps(props, state) {
     const { updated, formatMask } = DatePicker.updateFormat(props, state.formatMask);
     if ((props.data.defaultToday !== state.defaultToday) || updated) {
-      const newState = DatePicker.updateDateTime(props, state, formatMask);
-      return newState;
+      return DatePicker.updateDateTime(props, state, formatMask);
     }
     return null;
   }
@@ -125,8 +152,6 @@ class DatePicker extends React.Component {
                      name={props.name}
                      ref={props.ref}
                      onChange={this.handleChange}
-                     dateFormat="MM/DD/YYYY"
-                     // placeholder={this.state.placeholder}
                      value={this.state.value}
                      className = "form-control" />
             }
