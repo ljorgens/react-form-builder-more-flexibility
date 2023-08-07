@@ -351,7 +351,7 @@ class Toolbar extends React.Component {
 
   addCustomOptions(item, elementOptions) {
     if (item.type === 'custom') {
-      const customOptions = Object.assign({}, item, elementOptions);
+      const customOptions = { ...item, ...elementOptions };
       customOptions.custom = true;
       customOptions.component = item.component || null;
       customOptions.custom_options = item.custom_options || [];
@@ -379,7 +379,7 @@ class Toolbar extends React.Component {
     }
 
     // add placeholder to form input
-    if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber', 'TextArea'].indexOf(element) !== -1) {
+    if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber', 'TextArea', 'DatePicker'].indexOf(element) !== -1) {
       elementOptions.showPlaceholder = true;
     }
 

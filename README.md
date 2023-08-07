@@ -85,6 +85,8 @@ form_action | string | Required | URL path to submit the form
 form_method | string | Required | Verb used in the form submission.
 action_name | string | Optional | Defines form submit button text.  Defaults to "Submit"
 onSubmit | function | optional | Invoke when submit data, if exists will override form post.
+onChange | function | optional | Invoke when Change data. only on generator
+onBlur | function | optional | Invoke when Blur data. only on generator
 data | array | Required | Question data retrieved from the database
 back_action | string | Optional | URL path to go back if needed.
 back_name | string | Optional | Button text for back action.  Defaults to "Cancel".
@@ -148,7 +150,6 @@ Then navigate to http://localhost:8080/ in your browser and you should be able t
 <ReactFormGenerator
     data={form}
     toolbarItems={items}
-    onChange={handleUpdate}
     onSubmit={handleSubmit}
     actionName="Set this to change the default submit button text"
     submitButton={<button type="submit" className="btn btn-primary">Submit</button>}

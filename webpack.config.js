@@ -17,7 +17,7 @@ module.exports = {
   plugins: [
     //
   ],
-  
+
   module: {
     rules: [
       {
@@ -49,7 +49,8 @@ module.exports = {
   },
   devServer: {
     port: 8080,
-    host: "localhost",
+    host: "0.0.0.0",
+    disableHostCheck: true,  // This will bypass host check for local IP
     historyApiFallback: true,
     headers: {
         "Access-Control-Allow-Origin": "*",

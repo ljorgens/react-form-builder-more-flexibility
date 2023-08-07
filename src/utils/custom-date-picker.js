@@ -1,9 +1,9 @@
 import React from 'react';
-import DatePicker from 'react-datepicker';
+import ReactDatePicker from 'react-datepicker';
 import { range } from 'lodash';
 
 function DatePickerComponent(props) {
-  const { showTimeInput, dateFormat, selected, onChange, isClearable } = props;
+  const { showTimeInput, dateFormat, selected, onChange, isClearable, portalId } = props;
   const ButtonDatePicker = ({ value, onClick }) => (
     <button type="button" className="form-control" style={{ minWidth: 140, textAlign: 'left' }} onClick={onClick}>
       {value || 'mm/dd/yyyy'}
@@ -25,8 +25,19 @@ function DatePickerComponent(props) {
     'December',
   ];
   return (
-    <DatePicker
+    <ReactDatePicker
+      name={props.name}
+      ref={props.ref}
+      selected={selected}
+      onChange={date => onChange(date)}
+      todayButton={'Today'}
+      className = "form-control"
+      showTimeSelect={props.showTimeSelect}
+      showTimeSelectOnly={props.showTimeSelectOnly}
       showTimeInput={showTimeInput}
+      autoComplete="off"
+      placeholderText={props.placeholderText}
+      portalId={portalId}
       dateFormat={dateFormat}
       isClearable={isClearable}
       customInput={<ButtonDatePicker />}
@@ -56,8 +67,6 @@ function DatePickerComponent(props) {
           </button>
         </div>
       )}
-      selected={selected}
-      onChange={date => onChange(date)}
     />
   );
 }

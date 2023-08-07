@@ -26,7 +26,7 @@ input[type="date"]:before {
   .rfb-item.nobreak { page-break-inside: avoid; }
 
   .rfb-item {
-    padding: 10px 0;
+    //padding: 10px 0;
     position: relative;
 
     img {
@@ -47,6 +47,8 @@ input[type="date"]:before {
     }
 
     .form-group {
+      margin-bottom: 0 !important;
+
       .option-inline {
         display: inline-block !important;
         margin-right: 10px;

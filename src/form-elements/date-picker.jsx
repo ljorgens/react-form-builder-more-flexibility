@@ -67,33 +67,98 @@ class DatePicker extends React.Component {
     };
   }
 
+  handleBirthdayFocus() {
+    this.setState({
+      birthdayFocused: true,
+    }, () => {
+      document.getElementById('year').placeholder = 'YYYY';
+      document.getElementById('day').placeholder = 'DD';
+      document.getElementById('month').placeholder = 'MM';
+    });
+  }
+
+  handleDateChange(event) {
+    const { month, day, year } = this.state;
+    const newValue = event.target.value;
+
+    switch (event.target.name) {
+      case 'month':
+        if (newValue > 12) {
+          this.setState({ month: '12' });
+        } else {
+          this.setState({ month: newValue });
+        }
+        break;
+      case 'day':
+        if (newValue > 31) {
+          this.setState({ day: '31' });
+        } else {
+          this.setState({ day: newValue });
+        }
+        break;
+      case 'year':
+        if (newValue > new Date().getFullYear()) {
+          this.setState({ year: new Date().getFullYear().toString() });
+        } else {
+          this.setState({ year: newValue });
+        }
+        break;
+      default:
+        break;
+    }
+
+    // After setting the state, create a new date using the updated values.
+    const updatedMonth = event.target.name === 'month' ? newValue : month;
+    const updatedDay = event.target.name === 'day' ? newValue : day;
+    const updatedYear = event.target.name === 'year' ? newValue : year;
+
+    if (updatedMonth && updatedDay && updatedYear) {
+      const newDate = new Date(`${updatedYear}-${updatedMonth}-${updatedDay}`);
+      this.handleChange({ value: newDate });
+    }
+  }
+
   handleChange = (dt) => {
-    let placeholder;
     const { formatMask } = this.state;
     const iOSFormatMask = 'yyyy-MM-dd';
-    if (dt && dt.target) {
-      placeholder = (dt && dt.target && dt.target.value === '') ? formatMask.toLowerCase() : '';
-      const dateValue = (dt.target.value) ? parseDate(dt.target.value, formatMask) : null;
-      if (dateValue && Number.isNaN(dateValue)) {
+
+    // Helper function to check if a date is valid
+    const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime());
+
+    let formattedDate = '';
+    let internalValue = null;
+    let placeholder = '';
+
+    // Handle dt.value instance of Date
+    if (dt && dt.value instanceof Date && isValidDate(dt.value)) {
+      formattedDate = format(dt.value, iOSFormatMask);
+      internalValue = dt.value;
+      placeholder = formatMask.toLowerCase();
+    }
+    // Handle dt.target
+    else if (dt && dt.target) {
+      placeholder = dt.target.value === '' ? formatMask.toLowerCase() : '';
+      const dateValue = dt.target.value ? parseDate(dt.target.value, formatMask) : null;
+      if (isValidDate(dateValue)) {
+        formattedDate = format(dateValue, iOSFormatMask);
+        internalValue = dateValue;
+      } else {
         console.log('Invalid date:', dt.target.value);
-      } else {
-        const formattedDate = (dateValue) ? format(dateValue, iOSFormatMask) : '';
-        this.setState({
-          value: formattedDate,
-          internalValue: dateValue,
-          placeholder,
-        });
       }
-    } else if (dt && Number.isNaN(dt)) {
-        console.log('Invalid date:', dt);
-      } else {
-        const formattedDate = (dt) ? format(dt, iOSFormatMask) : '';
-        this.setState({
-          value: formattedDate,
-          internalValue: dt,
-          placeholder,
-        });
-      }
+    }
+    // Handle general dt scenario
+    else if (dt && isValidDate(dt)) {
+      formattedDate = format(dt, iOSFormatMask);
+      internalValue = dt;
+    } else {
+      console.log('Invalid date:', dt);
+    }
+
+    this.setState({
+      value: formattedDate,
+      internalValue,
+      placeholder,
+    });
   };
 
   static updateFormat(props, oldFormatMask) {
@@ -115,7 +180,7 @@ class DatePicker extends React.Component {
   }
 
   render() {
-    const { showTimeSelect, showTimeSelectOnly, showTimeInput } = this.props.data;
+    const { showTimeSelect, showTimeSelectOnly, showTimeInput, placeholder } = this.props.data;
     const props = {};
     props.type = 'date';
     props.className = 'form-control';
@@ -143,35 +208,46 @@ class DatePicker extends React.Component {
                      name={props.name}
                      ref={props.ref}
                      readOnly={readOnly}
-                     placeholder={this.state.placeholder}
+                     placeholder={placeholder || this.state.placeholder}
                      value={this.state.value}
                      className="form-control" />
             }
-            { iOS && !readOnly &&
-              <input type="date"
-                     name={props.name}
-                     ref={props.ref}
-                     onChange={this.handleChange}
-                     value={this.state.value}
-                     className = "form-control" />
+            { !readOnly &&
+              <div className="input-group" style={{ border: '1px solid #ced4da', borderRadius: '0.25rem', marginTop: 10 }}>
+                <input value={this.state.month} onKeyUp={(e) => e.target.value && e.target.value.length === 2 && document.getElementById('day').focus()} name="month" id="month" onChange={(e) => this.handleDateChange(e)} className="form-control" type="text" style={{ border: 'none' }} onFocus={(e) => this.handleBirthdayFocus()} placeholder={placeholder || this.state.placeholder} maxLength="2" pattern="\d*"/>
+                {this.state.birthdayFocused &&
+                  <>
+                    <span style={{ display: this.state.year || this.state.day || this.state.month ? '' : 'none', alignSelf: 'center' }}>/</span>
+                    <input value={this.state.day} onKeyUp={(e) => e.target.value && e.target.value.length === 2 && document.getElementById('year').focus()} name="day" id="day" className="form-control" type="text" style={{ border: 'none' }} onChange={(e) => this.handleDateChange(e)} onFocus={(e) => this.handleBirthdayFocus()} maxLength="2" pattern="\d*"/>
+                    <span style={{ display: this.state.year || this.state.day || this.state.month ? '' : 'none', alignSelf: 'center' }}>/</span>
+                    <input value={this.state.year} name="year" id="year" className="form-control" type="text" style={{ border: 'none' }} onFocus={(e) => this.handleBirthdayFocus()} maxLength="4" pattern="\d*" onChange={(e) => this.handleDateChange(e)}/>
+                  </>
+                }
+              </div>
+              // <input type="date"
+              //        name={props.name}
+              //        ref={props.ref}
+              //        onChange={this.handleChange}
+              //        value={this.state.value}
+              //        className = "form-control" />
             }
-            { !iOS && !readOnly &&
-              <ReactDatePicker
-                name={props.name}
-                ref={props.ref}
-                onChange={this.handleChange}
-                selected={this.state.internalValue}
-                todayButton={'Today'}
-                className = "form-control"
-                isClearable={true}
-                showTimeSelect={showTimeSelect}
-                showTimeSelectOnly={showTimeSelectOnly}
-                showTimeInput={showTimeInput}
-                dateFormat={this.state.formatMask}
-                portalId="root-portal"
-                autoComplete="off"
-                placeholderText={placeholderText} />
-            }
+            {/* { !iOS && !readOnly && */}
+            {/*   <ReactDatePicker */}
+            {/*     name={props.name} */}
+            {/*     ref={props.ref} */}
+            {/*     onChange={this.handleChange} */}
+            {/*     selected={this.state.internalValue} */}
+            {/*     todayButton={'Today'} */}
+            {/*     className = "form-control" */}
+            {/*     isClearable={true} */}
+            {/*     showTimeSelect={showTimeSelect} */}
+            {/*     showTimeSelectOnly={showTimeSelectOnly} */}
+            {/*     showTimeInput={showTimeInput} */}
+            {/*     dateFormat={this.state.formatMask} */}
+            {/*     portalId="root-portal" */}
+            {/*     autoComplete="off" */}
+            {/*     placeholderText={placeholder || placeholderText} /> */}
+            {/* } */}
           </div>
         </div>
       </div>
