@@ -1,30 +1,10 @@
 import React from 'react';
 import { format, parse } from 'date-fns';
-import ReactDatePicker from 'react-datepicker';
 import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 
 // This is the utility function that will attempt to parse a date string
 // using several different formats until it finds one that works.
-function parseDate(dateStr, formatMask) {
-  const formats = [
-    'yyyy-MM-dd', // format updated
-    'MM/dd/yyyy',
-    formatMask,
-    // add any other formats you might need to support
-  ];
-
-  const date = formats.find((newFormat) => {
-    const parsedDate = parse(dateStr, newFormat, new Date());
-    return !Number.isNaN(parsedDate.getTime());
-  });
-
-  if (date) {
-    return parse(dateStr, date, new Date());
-  }
-  return null;
-}
-
 class DatePicker extends React.Component {
   constructor(props) {
     super(props);
@@ -107,59 +87,16 @@ class DatePicker extends React.Component {
         break;
     }
 
-    // After setting the state, create a new date using the updated values.
     const updatedMonth = event.target.name === 'month' ? newValue : month;
     const updatedDay = event.target.name === 'day' ? newValue : day;
     const updatedYear = event.target.name === 'year' ? newValue : year;
 
-    if (updatedMonth && updatedDay && updatedYear) {
-      const newDate = new Date(`${updatedYear}-${updatedMonth}-${updatedDay}`);
-      this.handleChange({ value: newDate });
-    }
+    this.setState({ value: {
+      year: updatedYear,
+        month: updatedMonth,
+        day: updatedDay,
+      } });
   }
-
-  handleChange = (dt) => {
-    const { formatMask } = this.state;
-    const iOSFormatMask = 'yyyy-MM-dd';
-
-    // Helper function to check if a date is valid
-    const isValidDate = (d) => d instanceof Date && !Number.isNaN(d.getTime());
-
-    let formattedDate = '';
-    let internalValue = null;
-    let placeholder = '';
-
-    // Handle dt.value instance of Date
-    if (dt && dt.value instanceof Date && isValidDate(dt.value)) {
-      formattedDate = format(dt.value, iOSFormatMask);
-      internalValue = dt.value;
-      placeholder = formatMask.toLowerCase();
-    }
-    // Handle dt.target
-    else if (dt && dt.target) {
-      placeholder = dt.target.value === '' ? formatMask.toLowerCase() : '';
-      const dateValue = dt.target.value ? parseDate(dt.target.value, formatMask) : null;
-      if (isValidDate(dateValue)) {
-        formattedDate = format(dateValue, iOSFormatMask);
-        internalValue = dateValue;
-      } else {
-        console.log('Invalid date:', dt.target.value);
-      }
-    }
-    // Handle general dt scenario
-    else if (dt && isValidDate(dt)) {
-      formattedDate = format(dt, iOSFormatMask);
-      internalValue = dt;
-    } else {
-      console.log('Invalid date:', dt);
-    }
-
-    this.setState({
-      value: formattedDate,
-      internalValue,
-      placeholder,
-    });
-  };
 
   static updateFormat(props, oldFormatMask) {
     const { showTimeSelect, showTimeSelectOnly, showTimeInput } = props.data;
@@ -180,15 +117,13 @@ class DatePicker extends React.Component {
   }
 
   render() {
-    const { showTimeSelect, showTimeSelectOnly, showTimeInput, placeholder } = this.props.data;
+    const { placeholder } = this.props.data;
     const props = {};
     props.type = 'date';
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     const readOnly = this.props.data.readOnly || this.props.read_only;
-    const iOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-    const placeholderText = this.state.formatMask.toLowerCase();
-
+    this.state.formatMask.toLowerCase();
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -224,30 +159,7 @@ class DatePicker extends React.Component {
                   </>
                 }
               </div>
-              // <input type="date"
-              //        name={props.name}
-              //        ref={props.ref}
-              //        onChange={this.handleChange}
-              //        value={this.state.value}
-              //        className = "form-control" />
             }
-            {/* { !iOS && !readOnly && */}
-            {/*   <ReactDatePicker */}
-            {/*     name={props.name} */}
-            {/*     ref={props.ref} */}
-            {/*     onChange={this.handleChange} */}
-            {/*     selected={this.state.internalValue} */}
-            {/*     todayButton={'Today'} */}
-            {/*     className = "form-control" */}
-            {/*     isClearable={true} */}
-            {/*     showTimeSelect={showTimeSelect} */}
-            {/*     showTimeSelectOnly={showTimeSelectOnly} */}
-            {/*     showTimeInput={showTimeInput} */}
-            {/*     dateFormat={this.state.formatMask} */}
-            {/*     portalId="root-portal" */}
-            {/*     autoComplete="off" */}
-            {/*     placeholderText={placeholder || placeholderText} /> */}
-            {/* } */}
           </div>
         </div>
       </div>
