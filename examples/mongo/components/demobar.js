@@ -55,9 +55,9 @@ export default class Demobar extends React.Component {
     const { postUrl } = this.props;
     console.log('onSubmit', data);
     // Place code to post json data to server here
-    post(postUrl, data).then(() => {
-      window.location.href = '/form';
-    });
+    // post(postUrl, data).then(() => {
+    //   window.location.href = '/form';
+    // });
     return false;
   }
 
