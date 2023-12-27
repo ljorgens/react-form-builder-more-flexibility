@@ -130,6 +130,7 @@ export default class FormElementsEdit extends React.Component {
     }
 
     let editorState;
+    let secondaryEditorState;
     if (this.props.element.hasOwnProperty('content')) {
       editorState = this.convertFromHTML(this.props.element.content);
     }
@@ -137,9 +138,8 @@ export default class FormElementsEdit extends React.Component {
       editorState = this.convertFromHTML(this.props.element.label);
     }
     if (this.props.element.hasOwnProperty('boxLabel')) {
-      editorState = this.convertFromHTML(this.props.element.boxLabel);
+      secondaryEditorState = this.convertFromHTML(this.props.element.boxLabel);
     }
-    console.log(this.props.element);
     return (
       <div>
         <div className="clearfix">
@@ -254,7 +254,7 @@ export default class FormElementsEdit extends React.Component {
 
             <Editor
               toolbar={toolbar}
-              defaultEditorState={editorState}
+              defaultEditorState={secondaryEditorState}
               onBlur={this.updateElement.bind(this)}
               onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'boxLabel')}
               stripPastedStyles={true} />
