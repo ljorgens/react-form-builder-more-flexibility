@@ -43,7 +43,7 @@ const TestComponent = () => <h2>Hello</h2>;
 //     key: 'FieldSet',
 //     label:"Field Set",
 //     name:"Field Set",
-    
+
 //   },
 //   {
 //     group_name: 'Multi Column Row',
@@ -106,7 +106,7 @@ const App = () => (
     locale='en'
     saveAlways={false}
     // toolbarItems={items}
-  
+
   />);
 
 ReactDOM.render(

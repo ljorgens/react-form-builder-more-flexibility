@@ -140,6 +140,7 @@ export default class FormElementsEdit extends React.Component {
     if (this.props.element.hasOwnProperty('boxLabel')) {
       secondaryEditorState = this.convertFromHTML(this.props.element.boxLabel);
     }
+
     return (
       <div>
         <div className="clearfix">
@@ -176,13 +177,17 @@ export default class FormElementsEdit extends React.Component {
         }
         { this.props.element.hasOwnProperty('label') &&
           <div className="form-group">
-            <label><IntlMessages id="display-label" /></label>
-            <Editor
-              toolbar={toolbar}
-              defaultEditorState={editorState}
-              onBlur={this.updateElement.bind(this)}
-              onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'label')}
-              stripPastedStyles={true} />
+            {!this.props.element.hide_display_label &&
+              <>
+                <label><IntlMessages id="display-label" /></label>
+                <Editor
+                  toolbar={toolbar}
+                  defaultEditorState={editorState}
+                  onBlur={this.updateElement.bind(this)}
+                  onEditorStateChange={this.onEditorStateChange.bind(this, 0, 'label')}
+                  stripPastedStyles={true} />
+              </>
+            }
             <br />
             <div className="custom-control custom-checkbox">
               <input id="is-required" className="custom-control-input" type="checkbox" checked={this_checked} value={true} onChange={this.editElementProp.bind(this, 'required', 'checked')} />
