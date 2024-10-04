@@ -478,10 +478,19 @@ class Checkbox extends React.Component {
     this.inputField = React.createRef();
   }
 
-  render() {
-    const classNames = 'custom-control custom-checkbox';
-    // if (this.props.data.inline) { classNames += ' option-inline'; }
+  clickDetected = () => {
+    if (this.props.onCheckboxClick) {
+      this.props.onCheckboxClick(this.props.data); // Pass the field name or data to the parent component
+    }
+  };
 
+  handleLabelClick = (event) => {
+    if (this.props.data && this.props.data.hasPopUp) {
+      this.clickDetected();
+    }
+  };
+
+  render() {
     let baseClasses = 'SortableItem rfb-item';
     if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
     const props = {};
@@ -500,10 +509,10 @@ class Checkbox extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel className="form-label" {...this.props} />
-          <div className={classNames}>
-            <input id={this.props.data.field_name} className="custom-control-input" {...props} />
-            <label className="custom-control-label" htmlFor={this.props.data.field_name} dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}/>
+          <ComponentLabel passUpClick={this.clickDetected} className="form-label" {...this.props} />
+          <div className="form-check form-check-inline">
+            <input className="form-check-input" id={this.props.data.field_name} {...props} />
+            <label className="form-check-label" onClick={this.handleLabelClick} dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}/>
           </div>
         </div>
       </div>

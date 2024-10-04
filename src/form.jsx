@@ -308,20 +308,46 @@ class ReactForm extends React.Component {
     return data.find(x => x.id === id);
   }
 
+  // getInputElement(item) {
+  //   if (item.custom) {
+  //     return this.getCustomElement(item);
+  //   }
+  //   console.log("FORM: ", item);
+  //   const Input = FormElements[item.element];
+  //   return (<Input
+  //     handleChange={this.handleChange}
+  //     ref={c => this.inputs[item.field_name] = c}
+  //     mutable={true}
+  //     key={`form_${item.id}`}
+  //     data={item}
+  //     read_only={this.props.read_only}
+  //     hide_required_alert={this.props.hide_required_alert}
+  //     defaultValue={this._getDefaultValue(item)} />);
+  // }
+
   getInputElement(item) {
     if (item.custom) {
       return this.getCustomElement(item);
     }
+
     const Input = FormElements[item.element];
-    return (<Input
-      handleChange={this.handleChange}
-      ref={c => this.inputs[item.field_name] = c}
-      mutable={true}
-      key={`form_${item.id}`}
-      data={item}
-      read_only={this.props.read_only}
-      hide_required_alert={this.props.hide_required_alert}
-      defaultValue={this._getDefaultValue(item)} />);
+    const props = {
+      handleChange: this.handleChange,
+      ref: c => this.inputs[item.field_name] = c,
+      mutable: true,
+      key: `form_${item.id}`,
+      data: item,
+      read_only: this.props.read_only,
+      hide_required_alert: this.props.hide_required_alert,
+      defaultValue: this._getDefaultValue(item),
+    };
+
+    // Check if the element is a Checkbox and pass the event handler
+    if (item.element === 'Checkbox') {
+      props.onCheckboxClick = this.props.onCheckboxClick;
+    }
+
+    return <Input {...props} />;
   }
 
   getContainerElement(item, Element) {

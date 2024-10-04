@@ -98,11 +98,19 @@ class ReactFormBuilder extends React.Component {
 function ReactFormGenerator(props) {
   const language = props.locale ? props.locale : 'en';
   const currentAppLocale = AppLocale[language];
+
+  const handleCheckboxClick = (fieldName) => {
+    // Handle the checkbox click event here or pass it up to a parent
+    if (props.onCheckboxClick) {
+      props.onCheckboxClick(fieldName);
+    }
+  };
+
   return (
     <IntlProvider
       locale={currentAppLocale.locale}
       messages={currentAppLocale.messages}>
-      <FormGenerator {...props} />
+      <FormGenerator {...props} onCheckboxClick={handleCheckboxClick} />
     </IntlProvider>
   );
 }

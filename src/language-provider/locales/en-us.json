@@ -60,6 +60,7 @@
   "checkboxes" : "Checkboxes",
   "checkbox": "Checkbox",
   "default-checked": "Default Checked",
+  "checkbox-has-popup": "Make Pop Up",
   "checkbox-label-text": "Checkbox Label Text",
   "multiple-choice":"Multiple Choice",
   "text-input":"Text Input",
