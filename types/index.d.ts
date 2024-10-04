@@ -121,6 +121,7 @@ export type ToolbarItem = {
 export interface FormBuilderProps {
   toolbarItems?: ToolbarItem[];
   files?: any[];
+  locale?: string;
   url?: string;
   showCorrectColumn?: boolean;
   show_description?: boolean;
@@ -151,6 +152,7 @@ export interface FormGeneratorProps {
   data: any[];
   back_action?: string;
   back_name?: string;
+  locale?: string;
   task_id?: number;
   answer_data?: any[];
   authenticity_token?: string;

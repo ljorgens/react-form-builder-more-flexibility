@@ -52,7 +52,7 @@ class ReactFormBuilder extends React.Component {
     const currentAppLocale = AppLocale[language];
     if (this.props.toolbarItems) { toolbarProps.items = this.props.toolbarItems; }
     return (
-      <DndProvider backend={HTML5Backend}>
+      <DndProvider backend={HTML5Backend} context={window}>
         <IntlProvider
           locale={currentAppLocale.locale}
           messages={currentAppLocale.messages}>
