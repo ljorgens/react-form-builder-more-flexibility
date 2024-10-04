@@ -484,7 +484,7 @@ class Checkbox extends React.Component {
     }
   };
 
-  handleLabelClick = (event) => {
+  handleLabelClick = () => {
     if (this.props.data && this.props.data.hasPopUp) {
       this.clickDetected();
     }
@@ -510,9 +510,17 @@ class Checkbox extends React.Component {
         <ComponentHeader {...this.props} />
         <div className="form-group">
           <ComponentLabel passUpClick={this.clickDetected} className="form-label" {...this.props} />
-          <div className="form-check form-check-inline">
-            <input className="form-check-input" id={this.props.data.field_name} {...props} />
-            <label className="form-check-label" onClick={this.handleLabelClick} dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}/>
+          <div className="form-check">
+            <input
+              className="form-check-input"
+              id={this.props.data.field_name}
+              {...props}
+            />
+            <label
+              className="form-check-label"
+              onClick={this.handleLabelClick}
+              dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}
+            />
           </div>
         </div>
       </div>
