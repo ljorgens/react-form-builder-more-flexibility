@@ -220,7 +220,10 @@ export default class Preview extends React.Component {
   moveCard(dragIndex, hoverIndex) {
     const { data } = this.state;
     const dragCard = data[dragIndex];
-    this.saveData(dragCard, dragIndex, hoverIndex);
+    // happens sometimes when you click to insert a new item from the toolbox
+    if (dragCard !== undefined) {
+      this.saveData(dragCard, dragIndex, hoverIndex);
+    }
   }
 
   // eslint-disable-next-line no-unused-vars

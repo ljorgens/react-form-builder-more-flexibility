@@ -437,6 +437,33 @@ export default class FormElementsEdit extends React.Component {
             <TextAreaAutosize type="text" className="form-control" id="questionDescription" defaultValue={this.props.element.description} onBlur={this.updateElement.bind(this)} onChange={this.editElementProp.bind(this, 'description', 'value')} />
           </div>
         }
+
+        {this.state.element.element === 'TextInput' && (
+          <div className="form-group">
+            <label className="control-label">Validation Message:</label>
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={this.props.element.validationMessage || ''}
+              onBlur={this.updateElement.bind(this)}
+              onChange={this.editElementProp.bind(this, 'validationMessage', 'value')}
+            />
+          </div>
+        )}
+
+        {this.state.element.element === 'TextInput' && (
+          <div className="form-group">
+            <label className="control-label">Validation Pattern (Regex):</label>
+            <input
+              type="text"
+              className="form-control"
+              defaultValue={this.props.element.validationPattern || ''}
+              onBlur={this.updateElement.bind(this)}
+              onChange={this.editElementProp.bind(this, 'validationPattern', 'value')}
+            />
+          </div>
+        )}
+
         { this.props.showCorrectColumn && this.props.element.canHaveAnswer && !this.props.element.hasOwnProperty('options') &&
           <div className="form-group">
             <label className="control-label" htmlFor="correctAnswer"><IntlMessages id="correct-answer" /></label>

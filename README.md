@@ -98,6 +98,7 @@ skip_validations | boolean | Optional | Suppress form validations on submit, if 
 display_short | boolean | Optional | Display an optional "shorter page/form" which is common for legal documents or situations where the user will just have to sign or fill out a shorter form with only the critical elements.
 read_only | boolean | Optional | Shows a read only version which has fields disabled and removes "required" labels.
 variables | object | Optional | Key/value object that can be used for Signature variable replacement.
+option_key_value | string | Optional | Use "key" or "value" of checked option item in json data, default is "key".
 
 ### Read only Signatures
 

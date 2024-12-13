@@ -451,7 +451,7 @@ class Checkboxes extends React.Component {
             props.type = 'checkbox';
             props.value = option.value;
             if (self.props.mutable) {
-              props.defaultChecked = self.props.defaultValue !== undefined && self.props.defaultValue.indexOf(option.key) > -1;
+              props.defaultChecked = self.props.defaultValue !== undefined && (self.props.defaultValue.indexOf(option.key) > -1 || self.props.defaultValue.indexOf(option.value) > -1);
             }
             if (this.props.read_only) {
               props.disabled = 'disabled';

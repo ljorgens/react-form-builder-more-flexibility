@@ -158,6 +158,8 @@ export interface FormGeneratorProps {
   authenticity_token?: string;
   hide_actions?: boolean;
   skip_validations?: boolean;
+  option_key_value?: 'key' | 'value';
+  download_path?: string;
   display_short?: boolean;
   read_only?: boolean;
   // eslint-disable-next-line no-undef

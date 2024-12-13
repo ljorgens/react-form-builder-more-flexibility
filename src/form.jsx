@@ -94,6 +94,11 @@ class ReactForm extends React.Component {
     return $item;
   }
 
+  _getOptionKeyValue = (option) => {
+    return this.props.option_key_value === 'value' ?
+      option.value : option.key;
+  }
+
   _isIncorrect(item) {
     let incorrect = false;
     if (item.canHaveAnswer) {
@@ -162,7 +167,7 @@ class ReactForm extends React.Component {
       item.options.forEach(option => {
         const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
         if ($option.checked) {
-          checked_options.push(option.value);
+          checked_options.push(this._getOptionKeyValue(option));
         }
       });
       itemData.value = checked_options;
