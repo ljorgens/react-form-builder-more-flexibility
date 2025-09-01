@@ -1,6 +1,6 @@
 {
   "name": "react-form-builder-more-flexibility",
-  "version": "1.0.56",
+  "version": "1.0.57",
   "description": "A complete form builder for react.",
   "main": "lib/index.js",
   "types": "types/index.d.ts",
@@ -98,6 +98,7 @@
     "clean": "rimraf dist",
     "copy:dist": "copyfiles -f \"./dist/*\" \"./public/dist\"",
     "prepublishOnly": "npm run clean && npm run build:lib && npm run build",
+    "publish": "npm publish",
     "watch": "webpack --watch",
     "start": "webpack-dev-server --hot --mode development",
     "serve:api": "node server/index.js",

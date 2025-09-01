@@ -381,6 +381,9 @@ class Toolbar extends React.Component {
     // add placeholder to form input
     if (['NumberInput', 'EmailInput', 'TextInput', 'PhoneNumber', 'TextArea', 'DatePicker'].indexOf(element) !== -1) {
       elementOptions.showPlaceholder = true;
+      if (item.placeholder !== undefined) {
+        elementOptions.placeholder = item.placeholder;
+      }
     }
 
     if (item.type === 'custom') {
