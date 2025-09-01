@@ -1,13 +1,16 @@
-// Variables
-@import "variables";
+// Modern SCSS file structure using @use and @forward
 
-// Component syles
-@import "react-star-rating";
-@import "react-select";
-@import "react-bootstrap-slider";
+// Core variables and mixins
+// @use replaces @import and prevents global namespace pollution
+@use 'variables' as vars;
 
-@import "react-draft";
+// Component styles with namespacing
+// This allows you to reference variables as component.variable
+@use 'react-star-rating';
+@use 'react-select';
+@use 'react-bootstrap-slider';
+@use 'react-draft';
 
 // Form builder styles
-@import "form-builder";
-@import "form-builder-form";
+@use 'form-builder';
+@use 'form-builder-form';

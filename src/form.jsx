@@ -1,9 +1,10 @@
+/* eslint-disable arrow-body-style */
+/* eslint-disable camelcase */
 /**
   * <Form />
   */
 
 import React from 'react';
-import ReactDOM from 'react-dom';
 import { EventEmitter } from 'fbemitter';
 import { injectIntl } from 'react-intl';
 import FormValidator from './form-validator';
@@ -86,7 +87,7 @@ class ReactForm extends React.Component {
     } else if (item.element === 'FileUpload') {
       $item.value = ref.state.fileUpload;
     } else if (ref && ref.inputField && ref.inputField.current) {
-      $item = ReactDOM.findDOMNode(ref.inputField.current);
+      $item = ref.inputField.current;
       if (trimValue && $item && typeof $item.value === 'string') {
         $item.value = $item.value.trim();
       }
@@ -105,7 +106,7 @@ class ReactForm extends React.Component {
       const ref = this.inputs[item.field_name];
       if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
         item.options.forEach(option => {
-          const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+          const $option = ref.options[`child_ref_${option.key}`];
           if ((option.hasOwnProperty('correct') && !$option.checked) || (!option.hasOwnProperty('correct') && $option.checked)) {
             incorrect = true;
           }
@@ -131,7 +132,7 @@ class ReactForm extends React.Component {
       if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
         let checked_options = 0;
         item.options.forEach(option => {
-          const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+          const $option = ref.options[`child_ref_${option.key}`];
           if ($option.checked) {
             checked_options += 1;
           }
@@ -165,7 +166,7 @@ class ReactForm extends React.Component {
     if (item.element === 'Checkboxes' || item.element === 'RadioButtons') {
       const checked_options = [];
       item.options.forEach(option => {
-        const $option = ReactDOM.findDOMNode(ref.options[`child_ref_${option.key}`]);
+        const $option = ref.options[`child_ref_${option.key}`];
         if ($option.checked) {
           checked_options.push(this._getOptionKeyValue(option));
         }
@@ -202,7 +203,7 @@ class ReactForm extends React.Component {
     if ($canvas_sig) {
       const base64 = $canvas_sig.toDataURL().replace('data:image/png;base64,', '');
       const isEmpty = $canvas_sig.isEmpty();
-      const $input_sig = ReactDOM.findDOMNode(ref.inputField.current);
+      const $input_sig = ref.inputField.current;
       if (isEmpty) {
         $input_sig.value = '';
       } else {
@@ -228,13 +229,13 @@ class ReactForm extends React.Component {
         const data = this._collectFormData(this.props.data, true);
         onSubmit(data);
       } else {
-        const $form = ReactDOM.findDOMNode(this.form);
+        const $form = this.form;
         $form.submit();
       }
     }
   }
 
-   handleBlur(event) {
+   handleBlur() {
     // Call submit function on blur
     if (this.props.onBlur) {
       const { onBlur } = this.props;
@@ -243,7 +244,7 @@ class ReactForm extends React.Component {
     }
   }
 
-  handleChange(event) {
+  handleChange() {
     // Call submit function on change
     if (this.props.onChange) {
       const { onChange } = this.props;

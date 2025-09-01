@@ -1,33 +1,52 @@
+/* eslint-disable implicit-arrow-linebreak */
 import React from 'react';
 import ReactDOM from 'react-dom';
-import { ReactFormBuilder, ElementStore, Registry } from 'react-form-builder2';
+import {
+  ReactFormBuilder,
+  ElementStore,
+  Registry,
+} from '@threehippies/react-form-builder';
 import DemoBar from './demobar';
 import * as variables from './variables';
 import { get, post } from './requests';
 
-const getUrl = (cid) => `https://safe-springs-35306.herokuapp.com/api/formdata?cid=${cid}`;
+const getUrl = (cid) =>
+  `https://safe-springs-35306.herokuapp.com/api/formdata?cid=${cid}`;
 
 const TestComponent = () => <h2>Hello</h2>;
 
 const MyInput = React.forwardRef((props, ref) => {
   const { name, defaultValue, disabled } = props;
-  return <input ref={ref} name={name} defaultValue={defaultValue} disabled={disabled} />;
+  return (
+    <input
+      ref={ref}
+      name={name}
+      defaultValue={defaultValue}
+      disabled={disabled}
+    />
+  );
 });
 
 Registry.register('MyInput', MyInput);
 Registry.register('TestComponent', TestComponent);
 
-const items = [{
+const items = [
+  {
     key: 'Header',
-  }, {
+  },
+  {
     key: 'TextInput',
-  }, {
+  },
+  {
     key: 'TextArea',
-  }, {
+  },
+  {
     key: 'RadioButtons',
-  }, {
+  },
+  {
     key: 'Checkboxes',
-  }, {
+  },
+  {
     key: 'Image',
   },
   {
@@ -115,12 +134,12 @@ class App extends React.Component {
   render() {
     return (
       <div className="App">
-        <label>
-          Select your form:
-        </label>
-        <select className="form-control"
-            value={this.state.formId}
-            onChange={this.handleChange} >
+        <label>Select your form:</label>
+        <select
+          className="form-control"
+          value={this.state.formId}
+          onChange={this.handleChange}
+        >
           <option value="1">Form 1</option>
           <option value="2">Form 2</option>
         </select>
@@ -129,18 +148,16 @@ class App extends React.Component {
           onLoad={this.onLoad}
           onPost={this.onPost}
           toolbarItems={items}
-        />,
+        />
+        ,
       </div>
     );
   }
 }
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('form-builder'),
-);
+ReactDOM.render(<App />, document.getElementById('form-builder'));
 
 ReactDOM.render(
   <DemoBar variables={variables} />,
-  document.getElementById('demo-bar'),
+  document.getElementById('demo-bar')
 );

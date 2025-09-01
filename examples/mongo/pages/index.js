@@ -1,5 +1,5 @@
 import React from 'react';
-import FormBuilder from 'react-form-builder2';
+import FormBuilder from '@threehippies/react-form-builder';
 import DemoBar from '../components/demobar';
 
 // Form Data
@@ -13,9 +13,7 @@ class Index extends React.Component {
       <div>
         <DemoBar postUrl={postUrl} />
 
-        <FormBuilder.ReactFormBuilder
-          url={url}
-          saveUrl={saveUrl} />
+        <FormBuilder.ReactFormBuilder url={url} saveUrl={saveUrl} />
       </div>
     );
   }

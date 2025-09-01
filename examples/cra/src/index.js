@@ -1,22 +1,16 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import App from './app';
 import DemoBar from './demobar';
 import * as serviceWorker from './serviceWorker';
 import * as variables from './variables';
 
-// ReactDOM.render(<App />, document.getElementById('root'));
+const root = createRoot(document.getElementById('form-builder'));
+root.render(<App />);
 
-ReactDOM.render(
-  <App />,
-  document.getElementById('form-builder'),
-);
-
-ReactDOM.render(
-  <DemoBar variables={variables} />,
-  document.getElementById('demo-bar'),
-);
+const demoBarRoot = createRoot(document.getElementById('demo-bar'));
+demoBarRoot.render(<DemoBar variables={variables} />);
 
 // If you want your app to work offline and load faster, you can change
 // unregister() to register() below. Note this comes with some pitfalls.

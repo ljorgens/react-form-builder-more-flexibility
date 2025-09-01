@@ -28,7 +28,7 @@ export default class Demobar extends React.Component {
     const update = this._onChange.bind(this);
     this._onSubmit = this._onSubmit.bind(this);
 
-    store.subscribe(state => update(state.data));
+    store.subscribe((state) => update(state.data));
   }
 
   showPreview() {
@@ -95,12 +95,36 @@ export default class Demobar extends React.Component {
     return (
       <div className="clearfix" style={{ margin: '10px', width: '70%' }}>
         <h4 className="float-left">Preview</h4>
-        <button className="btn btn-primary float-right" style={{ marginRight: '10px' }} onClick={() => this.showPreview()}>Preview Form</button>
-        <button className="btn btn-default float-right" style={{ marginRight: '10px' }} onClick={() => this.showShortPreview()}>Alternate/Short Form</button>
-        <button className="btn btn-default float-right" style={{ marginRight: '10px' }} onClick={() => this.showRoPreview()}>Read Only Form</button>
-        <button className="btn btn-default float-right" style={{ marginRight: '10px' }} onClick={() => this.saveFormData()}>Save Form</button>
+        <button
+          className="btn btn-primary float-right"
+          style={{ marginRight: '10px' }}
+          onClick={() => this.showPreview()}
+        >
+          Preview Form
+        </button>
+        <button
+          className="btn btn-default float-right"
+          style={{ marginRight: '10px' }}
+          onClick={() => this.showShortPreview()}
+        >
+          Alternate/Short Form
+        </button>
+        <button
+          className="btn btn-default float-right"
+          style={{ marginRight: '10px' }}
+          onClick={() => this.showRoPreview()}
+        >
+          Read Only Form
+        </button>
+        <button
+          className="btn btn-default float-right"
+          style={{ marginRight: '10px' }}
+          onClick={() => this.saveFormData()}
+        >
+          Save Form
+        </button>
 
-        { this.state.previewVisible &&
+        {this.state.previewVisible && (
           <div className={modalClass} role="dialog">
             <div className="modal-dialog modal-lg" role="document">
               <div className="modal-content">
@@ -116,17 +140,25 @@ export default class Demobar extends React.Component {
                   onSubmit={this._onSubmit}
                   variables={this.props.variables}
                   data={this.state.data}
-                  locale='en'/>
+                  locale="en"
+                />
 
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.closePreview.bind(this)}>Close</button>
+                  <button
+                    type="button"
+                    className="btn btn-default"
+                    data-dismiss="modal"
+                    onClick={this.closePreview.bind(this)}
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        }
+        )}
 
-        { this.state.roPreviewVisible &&
+        {this.state.roPreviewVisible && (
           <div className={roModalClass}>
             <div className="modal-dialog modal-lg">
               <div className="modal-content">
@@ -142,17 +174,25 @@ export default class Demobar extends React.Component {
                   variables={this.props.variables}
                   hide_actions={true}
                   data={this.state.data}
-                  locale='en'/>
+                  locale="en"
+                />
 
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.closePreview.bind(this)}>Close</button>
+                  <button
+                    type="button"
+                    className="btn btn-default"
+                    data-dismiss="modal"
+                    onClick={this.closePreview.bind(this)}
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        }
+        )}
 
-        { this.state.shortPreviewVisible &&
+        {this.state.shortPreviewVisible && (
           <div className={shortModalClass}>
             <div className="modal-dialog modal-lg">
               <div className="modal-content border border-light p-3 mb-4">
@@ -166,16 +206,23 @@ export default class Demobar extends React.Component {
                   display_short={true}
                   variables={this.props.variables}
                   hide_actions={false}
-                  locale='en'
-                  />
+                  locale="en"
+                />
 
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-default" data-dismiss="modal" onClick={this.closePreview.bind(this)}>Close</button>
+                  <button
+                    type="button"
+                    className="btn btn-default"
+                    data-dismiss="modal"
+                    onClick={this.closePreview.bind(this)}
+                  >
+                    Close
+                  </button>
                 </div>
               </div>
             </div>
           </div>
-        }
+        )}
       </div>
     );
   }

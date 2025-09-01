@@ -1,7 +1,6 @@
-import React, { Component } from 'react';
+import React, { useRef } from 'react';
 import PropTypes from 'prop-types';
-import { findDOMNode } from 'react-dom';
-import { DragSource, DropTarget } from 'react-dnd';
+import { useDrag, useDrop } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 
 const style = {
@@ -12,146 +11,169 @@ const style = {
   cursor: 'pointer',
 };
 
-const cardSource = {
-  beginDrag(props) {
-    return {
+// Modern approach using a custom hook for DnD logic
+const useDragAndDrop = (props) => {
+  const ref = useRef(null);
+  
+  // Setup drag
+  const [{ isDragging }, drag, preview] = useDrag({
+    type: ItemTypes.CARD,
+    item: () => ({
       itemType: ItemTypes.CARD,
       id: props.id,
       index: props.index,
-    };
-  },
-};
+    }),
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
 
-const cardTarget = {
-  drop(
-    props,
-    monitor,
-    component,
-  ) {
-    if (!component) {
-      return;
-    }
-
-    const item = monitor.getItem();
-    const hoverIndex = props.index;
-    const dragIndex = item.index;
-
-    if ((props.data && props.data.isContainer) || item.itemType === ItemTypes.CARD) {
-      // console.log('cardTarget -  Drop', item.itemType);
-      return;
-    }
-    if (item.data && typeof item.setAsChild === 'function') {
-      // console.log('BOX', item);
-      if (dragIndex === -1) {
-        props.insertCard(item, hoverIndex, item.id);
-      }
-    }
-  },
-  hover(props, monitor, component) {
-    const item = monitor.getItem();
-
-    if (item.itemType === ItemTypes.BOX && item.index === -1) return;
-
-    // Don't replace multi-column component unless both drag & hover are multi-column
-    if (props.data?.isContainer && !item.data?.isContainer) return;
-
-    const dragIndex = item.index;
-    const hoverIndex = props.index;
-
-    // Don't replace items with themselves
-    if (dragIndex === hoverIndex) {
-      return;
-    }
-
-    if (dragIndex === -1) {
-      if (props.data && props.data.isContainer) {
+  // Setup drop
+  const [, drop] = useDrop({
+    accept: [ItemTypes.CARD, ItemTypes.BOX],
+    drop: (item) => {
+      // Don't handle drops if we're a container and this is a card drop
+      if ((props.data && props.data.isContainer) || item.itemType === ItemTypes.CARD) {
         return;
       }
-      // console.log('CARD', item);
+      
+      const hoverIndex = props.index;
+      const dragIndex = item.index;
+      
+      // Handle box drops
+      if (item.data && typeof item.setAsChild === 'function') {
+        if (dragIndex === -1) {
+          props.insertCard(item, hoverIndex, item.id);
+        }
+      }
+    },
+    hover: (item, monitor) => {
+      // Don't replace items being dragged from box with index -1
+      if (item.itemType === ItemTypes.BOX && item.index === -1) return;
+
+      // Don't replace multi-column component unless both drag & hover are multi-column
+      if (props.data?.isContainer && !item.data?.isContainer) return;
+
+      const dragIndex = item.index;
+      const hoverIndex = props.index;
+
+      // Don't replace items with themselves
+      if (dragIndex === hoverIndex) {
+        return;
+      }
+
+      // Handle new items being created
+      if (dragIndex === -1) {
+        if (props.data && props.data.isContainer) {
+          return;
+        }
+        
+        item.index = hoverIndex;
+        props.insertCard(item.onCreate(item.data), hoverIndex);
+        return;
+      }
+
+      // Skip if no ref available
+      if (!ref.current) {
+        return;
+      }
+
+      // Determine rectangle on screen
+      const hoverBoundingRect = ref.current.getBoundingClientRect();
+
+      // Get vertical middle
+      const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
+
+      // Determine mouse position
+      const clientOffset = monitor.getClientOffset();
+      if (!clientOffset) return;
+
+      // Get pixels to the top
+      const hoverClientY = clientOffset.y - hoverBoundingRect.top;
+
+      // Only perform the move when the mouse has crossed half of the items height
+      // When dragging downwards, only move when the cursor is below 50%
+      // When dragging upwards, only move when the cursor is above 50%
+
+      // Dragging downwards
+      if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
+        return;
+      }
+
+      // Dragging upwards
+      if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
+        return;
+      }
+
+      // Time to actually perform the action
+      props.moveCard(dragIndex, hoverIndex);
+
+      // Note: we're mutating the monitor item here!
+      // Generally it's better to avoid mutations,
+      // but it's good here for the sake of performance
+      // to avoid expensive index searches.
       item.index = hoverIndex;
-      props.insertCard(item.onCreate(item.data), hoverIndex);
-    }
+    },
+  });
 
-    // Determine rectangle on screen
-    const hoverBoundingRect = findDOMNode(component).getBoundingClientRect();
-
-    // Get vertical middle
-    const hoverMiddleY = (hoverBoundingRect.bottom - hoverBoundingRect.top) / 2;
-
-    // Determine mouse position
-    const clientOffset = monitor.getClientOffset();
-
-    // Get pixels to the top
-    const hoverClientY = clientOffset.y - hoverBoundingRect.top;
-
-    // Only perform the move when the mouse has crossed half of the items height
-    // When dragging downwards, only move when the cursor is below 50%
-    // When dragging upwards, only move when the cursor is above 50%
-
-    // Dragging downwards
-    if (dragIndex < hoverIndex && hoverClientY < hoverMiddleY) {
-      return;
-    }
-
-    // Dragging upwards
-    if (dragIndex > hoverIndex && hoverClientY > hoverMiddleY) {
-      return;
-    }
-
-    // Time to actually perform the action
-    props.moveCard(dragIndex, hoverIndex);
-
-    // Note: we're mutating the monitor item here!
-    // Generally it's better to avoid mutations,
-    // but it's good here for the sake of performance
-    // to avoid expensive index searches.
-
-    // if (item.itemType == ItemTypes.BOX) item.cardIndex = hoverIndex;
-    // else
-    item.index = hoverIndex;
-  },
+  // Connect the drag and drop refs to the same element
+  return {
+    ref: (node) => {
+      ref.current = node;
+      drop(node);
+      drag(node);
+    },
+    previewRef: preview,
+    isDragging,
+  };
 };
 
-// eslint-disable-next-line no-unused-vars
-export default function (ComposedComponent) {
-  class Card extends Component {
-    static propTypes = {
-      connectDragSource: PropTypes.func,
-      connectDragPreview: PropTypes.func,
-      connectDropTarget: PropTypes.func,
-      index: PropTypes.number.isRequired,
-      isDragging: PropTypes.bool,
-      id: PropTypes.any.isRequired,
-      // text: PropTypes.string.isRequired,
-      moveCard: PropTypes.func.isRequired,
-      seq: PropTypes.number,
-    }
+// Modern approach using a functional component wrapper instead of HOC
+const DraggableCard = (props) => {
+  const {
+    index,
+    id,
+    moveCard,
+    seq = -1,
+    ...restProps
+  } = props;
 
-    static defaultProps = {
-      seq: -1,
-    };
+  const { ref, previewRef, isDragging } = useDragAndDrop(props);
+  const opacity = isDragging ? 0 : 1;
 
-    render() {
-      const {
-        isDragging,
-        // connectDragSource,
-        connectDragPreview,
-        connectDropTarget,
-      } = this.props;
-      const opacity = isDragging ? 0 : 1;
+  // Use the ComposedComponent passed in props
+  const ComposedComponent = props.component;
 
-      return connectDragPreview(
-        connectDropTarget(<div><ComposedComponent {...this.props} style={{ ...style, opacity }}></ComposedComponent></div>),
-      );
-    }
-  }
+  return (
+    <div ref={previewRef}>
+      <div ref={ref}>
+        <ComposedComponent 
+          {...restProps} 
+          index={index}
+          id={id}
+          moveCard={moveCard}
+          seq={seq}
+          style={{ ...style, opacity }} 
+        />
+      </div>
+    </div>
+  );
+};
 
-  const x = DropTarget([ItemTypes.CARD, ItemTypes.BOX], cardTarget, connect => ({
-    connectDropTarget: connect.dropTarget(),
-  }))(Card);
-  return DragSource(ItemTypes.CARD, cardSource, (connect, monitor) => ({
-    connectDragSource: connect.dragSource(),
-    connectDragPreview: connect.dragPreview(),
-    isDragging: monitor.isDragging(),
-  }))(x);
+DraggableCard.propTypes = {
+  component: PropTypes.elementType.isRequired,
+  index: PropTypes.number.isRequired,
+  isDragging: PropTypes.bool,
+  id: PropTypes.any.isRequired,
+  moveCard: PropTypes.func.isRequired,
+  seq: PropTypes.number,
+};
+
+DraggableCard.defaultProps = {
+  seq: -1,
+};
+
+// This replaces the HOC pattern with a component that takes the component as a prop
+export default function createDraggableCard(ComposedComponent) {
+  return (props) => <DraggableCard {...props} component={ComposedComponent} />;
 }

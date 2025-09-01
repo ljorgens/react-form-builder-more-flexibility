@@ -27,18 +27,29 @@ class CustomElement extends Component {
     const Element = this.props.data.component;
 
     let baseClasses = 'SortableItem rfb-item';
-    if (this.props.data.pageBreakBefore) { baseClasses += ' alwaysbreak'; }
+    if (this.props.data.pageBreakBefore) {
+      baseClasses += ' alwaysbreak';
+    }
 
     return (
       <div className={baseClasses} style={{ ...this.props.style }}>
         <ComponentHeader {...this.props} />
-        { bare ?
-          <Element data={this.props.data} {...this.props.data.props} {...props} /> :
+        {bare ? (
+          <Element
+            data={this.props.data}
+            {...this.props.data.props}
+            {...props}
+          />
+        ) : (
           <div className="form-group">
             <ComponentLabel className="form-label" {...this.props} />
-            <Element data={this.props.data} {...this.props.data.props} {...props} />
+            <Element
+              data={this.props.data}
+              {...this.props.data.props}
+              {...props}
+            />
           </div>
-        }
+        )}
       </div>
     );
   }

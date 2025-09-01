@@ -13,7 +13,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "react-form-builder2": "^0.13.0",
+    "@threehippies/react-form-builder": "^0.20.1",
     "react-draft-wysiwyg": "1.13.2",
     "body-parser": "^1.18.3",
     "classnames": "^2.2.5",

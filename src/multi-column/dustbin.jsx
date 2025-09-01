@@ -1,5 +1,5 @@
-import React, { useImperativeHandle, Fragment } from 'react';
-import { DropTarget } from 'react-dnd';
+import React, { useRef } from 'react';
+import { useDrop } from 'react-dnd';
 import FormElements from '../form-elements';
 import ItemTypes from '../ItemTypes';
 
@@ -60,93 +60,80 @@ function isContainer(item) {
   return false;
 }
 
-const Dustbin = React.forwardRef(
-  ({
-    onDropSuccess, seq, draggedItem, parentIndex, canDrop, isOver, isOverCurrent, connectDropTarget, items, col, getDataById, ...rest
-  }, ref) => {
-    const item = getDataById(items[col]);
-    useImperativeHandle(
-      ref,
-      () => ({
-        onDrop: (dropped) => {
-          console.log("dropped ites")
-          const { data } = dropped;
-          if (data) {
-            onDropSuccess && onDropSuccess();
-            store.dispatch('deleteLastItem');
-          }
-        },
-      }),
-      [],
-    );
+const Dustbin = ({
+  onDropSuccess,
+  seq,
+  parentIndex,
+  items,
+  col,
+  getDataById,
+  accepts,
+  data,
+  setAsChild,
+  ...rest
+}) => {
+  const dropRef = useRef(null);
+  const item = getDataById(items[col]);
 
-    const element = getElement(item, rest);
-    const sameCard = draggedItem ? draggedItem.index === parentIndex : false;
-
-    // console.log('dragIndex:',draggedItem?.index)
-    // console.log('HoverIndex:',parentIndex)
-    // console.log('SameCard:',sameCard)
-
-    let backgroundColor = 'rgba(0, 0, 0, .03)';
-
-    if (!sameCard && isOver && canDrop && !draggedItem.data.isContainer) {
-      backgroundColor = '#F7F589';
-    }
-
-    // console.log('sameCard, canDrop', sameCard, canDrop);
-    return connectDropTarget(
-      <div style={!sameCard ? getStyle(backgroundColor) : getStyle('rgba(0, 0, 0, .03') }>
-      {!element && <span>Drop your element here </span>}
-        {element}
-      </div>,
-    );
-  },
-);
-
-export default DropTarget(
-  (props) => props.accepts,
-  {
-    drop(
-      props,
-      monitor,
-      component,
-    ) {
-
-      if (!component) {
-        return;
-      }
-
-      // //Do nothing whith busy dustbin
-      // if(props.items[props.col]) return;
-      // Allow swap column if target and source are in same multi column row
-      const isBusy = !!props.items[props.col];
-      const item = monitor.getItem();
-
+  const [{ isOver, canDrop, draggedItem }, drop] = useDrop({
+    accept: accepts,
+    collect: (monitor) => ({
+      isOver: monitor.isOver(),
+      canDrop: monitor.canDrop(),
+      draggedItem: monitor.getItem(),
+    }),
+    drop: (droppedItem) => {
       // Do nothing when moving the box inside the same column
-      if (props.col === item.col && props.items[props.col] === item.id) return;
+      if (col === droppedItem.col && items[col] === droppedItem.id) return;
 
       // Do not allow replace component other than both items in same multi column row
-      if (item.col === undefined && props.items[props.col]) {
+      if (droppedItem.col === undefined && items[col]) {
         store.dispatch('resetLastItem');
         return;
       }
 
-      if (!isContainer(item)) {
-        (component).onDrop(item);
-        console.log("calling on Drop from 137",item)
-        if (item.data && typeof props.setAsChild === 'function') {
-          const isNew = !item.data.id;
-          const data = isNew ? item.onCreate(item.data) : item.data;
-          props.setAsChild(props.data, data, props.col, isBusy);
+      if (!isContainer(droppedItem)) {
+        console.log("Item dropped", droppedItem);
+        
+        const isBusy = !!items[col];
+        
+        if (droppedItem.data) {
+          const isNew = !droppedItem.data.id;
+          const itemData = isNew ? droppedItem.onCreate(droppedItem.data) : droppedItem.data;
+          
+          if (typeof setAsChild === 'function') {
+            setAsChild(data, itemData, col, isBusy);
+          }
+          
+          onDropSuccess && onDropSuccess();
+          store.dispatch('deleteLastItem');
         }
       }
     },
-  },
-  (connect, monitor) => ({
-    connectDropTarget: connect.dropTarget(),
-    draggedItem: monitor.getItem() ? monitor.getItem() : null,
-    isOver: monitor.isOver(),
-    isOverCurrent: monitor.isOver({ shallow: true }),
-    canDrop: monitor.canDrop(),
-  }),
-)(Dustbin);
+    canDrop: (item) => {
+      // Add any custom logic for when an item can be dropped
+      return true;
+    },
+  });
+
+  const element = getElement(item, rest);
+  const sameCard = draggedItem ? draggedItem.index === parentIndex : false;
+
+  let backgroundColor = 'rgba(0, 0, 0, .03)';
+
+  if (!sameCard && isOver && canDrop && draggedItem && !draggedItem.data?.isContainer) {
+    backgroundColor = '#F7F589';
+  }
+
+  // Connect the drop ref to the DOM element
+  drop(dropRef);
+
+  return (
+    <div ref={dropRef} style={!sameCard ? getStyle(backgroundColor) : getStyle('rgba(0, 0, 0, .03)')}>
+      {!element && <span>Drop your element here</span>}
+      {element}
+    </div>
+  );
+};
+
+export default Dustbin;

@@ -65,7 +65,8 @@
 
    addOption(index) {
      const this_element = this.state.element;
-     this_element.options.splice(index + 1, 0, { value: '', text: '', key: ID.uuid() });
+     const groupKey = this_element.element.toLowerCase();
+     this_element.options.splice(index + 1, 0, { value: '', text: '', key: `${groupKey}_option_${ID.uuid()}` });
      this.props.updateElement.call(this.props.preview, this_element);
    }
 

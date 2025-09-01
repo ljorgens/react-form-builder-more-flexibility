@@ -1,18 +1,18 @@
-var path = require('path');
-var webpack = require('webpack');
+var path = require("path");
+var webpack = require("webpack");
 
 module.exports = {
-  entry: './app.js',
-  devtool: 'source-map',
+  entry: "./app.js",
+  devtool: "source-map",
   output: {
-    path: path.resolve('./public'),
-    filename: 'app.js'
+    path: path.resolve("./public"),
+    filename: "app.js",
   },
   resolve: {
-    extensions: ['.js', '.jsx', '.scss', '.css', '.json'],
+    extensions: [".js", ".jsx", ".scss", ".css", ".json"],
     alias: {
-      "jquery": path.join(__dirname, "./jquery-stub.js")
-    }
+      jquery: path.join(__dirname, "./jquery-stub.js"),
+    },
   },
   plugins: [
     //
@@ -23,45 +23,57 @@ module.exports = {
       {
         exclude: /node_modules/,
         test: /\.js$|.jsx?$/,
-        use: [
-          { loader: 'babel-loader' }
-        ],
+        use: [{ loader: "babel-loader" }],
       },
       {
         test: /\.scss$/,
         use: [
           {
-            loader: 'style-loader'
+            loader: "style-loader",
           },
           {
-            loader: 'css-loader'
+            loader: "css-loader",
           },
           {
-            loader: 'sass-loader', options: {
+            loader: "sass-loader",
+            options: {
               sassOptions: {
-                includePaths: ['./node_modules'],
+                includePaths: ["./node_modules"],
               },
-            }
-          }
-        ]
+            },
+          },
+        ],
       },
-    ]
+    ],
   },
   devServer: {
     port: 8080,
     host: "0.0.0.0",
-    disableHostCheck: true,  // This will bypass host check for local IP
+    // disableHostCheck: true,  // This will bypass host check for local IP
+    allowedHosts: "all",
     historyApiFallback: true,
     headers: {
-        "Access-Control-Allow-Origin": "*",
-        "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
-        "Access-Control-Allow-Headers": "X-Requested-With, content-type, Authorization"
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "GET, POST, PUT, DELETE, PATCH, OPTIONS",
+      "Access-Control-Allow-Headers":
+        "X-Requested-With, content-type, Authorization",
     },
-    watchOptions: {aggregateTimeout: 300, poll: 1000},
-    contentBase: './public',
+    watchFiles: {
+      paths: ["**/*"],
+      options: {
+        aggregateTimeout: 300,
+        polling: 1000,
+      },
+    },
+    static: {
+      directory: "./public",
+    },
     open: true,
-    proxy: {
-      "/api/*": "http://127.0.0.1:5005"
-    }
-  }
+    proxy: [
+      {
+        context: ["/api/*"],
+        target: "http://127.0.0.1:5005",
+      },
+    ],
+  },
 };

@@ -29,7 +29,7 @@
     "node-sass": "^4.11.0",
     "react": "^16.8.6",
     "react-dom": "^16.8.6",
-    "react-form-builder2": "^0.8.7",
+    "@threehippies/react-form-builder": "^0.20.1",
     "react-draft-wysiwyg": "1.13.2"
   },
   "devDependencies": {

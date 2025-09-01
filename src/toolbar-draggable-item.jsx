@@ -3,33 +3,38 @@
   */
 
 import React from 'react';
-import { DragSource } from 'react-dnd';
+import { useDrag } from 'react-dnd';
 import ItemTypes from './ItemTypes';
 import ID from './UUID';
 
-const cardSource = {
-  beginDrag(props) {
-    return {
+const ToolbarItem = ({ data, onCreate, onClick }) => {
+  // Setup drag functionality using the useDrag hook
+  const [{ isDragging }, drag] = useDrag({
+    type: ItemTypes.CARD,
+    item: () => ({
       id: ID.uuid(),
       index: -1,
-      data: props.data,
-      onCreate: props.onCreate,
-    };
-  },
+      data: data,
+      onCreate: onCreate,
+    }),
+    collect: (monitor) => ({
+      isDragging: monitor.isDragging(),
+    }),
+  });
+
+  // Apply slight opacity while dragging for better UX
+  const opacity = isDragging ? 0.5 : 1;
+
+  return (
+    <li 
+      ref={drag} 
+      onClick={onClick} 
+      style={{ opacity, cursor: 'move' }}
+    >
+      <i className={data.icon}></i>
+      {data.name}
+    </li>
+  );
 };
 
-class ToolbarItem extends React.Component {
-  render() {
-    const { connectDragSource, data, onClick } = this.props;
-    if (!connectDragSource) return null;
-    return (
-      connectDragSource(
-        <li onClick={onClick}><i className={data.icon}></i>{data.name}</li>,
-      )
-    );
-  }
-}
-
-export default DragSource(ItemTypes.CARD, cardSource, connect => ({
-  connectDragSource: connect.dragSource(),
-}))(ToolbarItem);
+export default ToolbarItem;
