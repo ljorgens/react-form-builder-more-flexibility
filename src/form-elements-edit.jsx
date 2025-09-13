@@ -161,16 +161,15 @@ export default class FormElementsEdit extends React.Component {
         // pluggable RTE: prefer caller-provided, else default
         const { renderRichTextEditor } = this.props;
         let RTE;
-        if (typeof renderRichTextEditor === 'function') {
-            RTE = (p) => renderRichTextEditor(p);
-        } else if (renderRichTextEditor && React.isValidElement(renderRichTextEditor)) {
+        if (React.isValidElement(renderRichTextEditor)) {
+            // Caller passed <Editor /> element instance
             RTE = (p) => React.cloneElement(renderRichTextEditor, p);
+        } else if (typeof renderRichTextEditor === 'function') {
+            // Caller passed a component type (preferred)
+            RTE = renderRichTextEditor;                // ✅ use it directly — no wrapper
         } else {
-            RTE = (p) => <DefaultRTE {...p} />;
+            RTE = DefaultRTE;                          // fallback
         }
-
-        console.log("HERE: ", RTE)
-        console.log("THERE: ", this.props.renderRichTextEditor)
 
         // booleans
         const this_checked = !!el.required;
