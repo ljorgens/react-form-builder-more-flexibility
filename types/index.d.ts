@@ -1,3 +1,4 @@
+// types/index.d.ts
 /* eslint-disable max-classes-per-file */
 import * as React from 'react';
 
@@ -131,6 +132,7 @@ export interface FormBuilderProps {
   saveAlways?: boolean;
   editMode?: boolean;
   renderEditForm?: (props: BaseElement) => React.ReactNode;
+  renderRichTextEditor?: (props: RichTextEditorProps) => React.ReactNode;
 }
 
 export class ReactFormBuilder extends React.Component<FormBuilderProps> {}
@@ -182,3 +184,11 @@ export class Registry {
 
   static get: (name: string) => React.ReactNode;
 }
+
+export type RichTextEditorProps = {
+    value: string;
+    onChange: (nextHtml: string) => void;
+    placeholder?: string;
+    disabled?: boolean;
+    className?: string;
+};

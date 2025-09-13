@@ -1,10 +1,8 @@
+//src/form-dynamic-edit.jsx
 import React from 'react';
 
 const FormElementsEditor = (props) => {
-  const [
-    dynamic,
-    setDynamic,
-  ] = React.useState(null);
+  const [dynamic, setDynamic,] = React.useState(null);
 
   React.useEffect(() => {
     const loadDynamic = async () => {

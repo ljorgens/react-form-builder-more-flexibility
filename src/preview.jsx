@@ -1,7 +1,4 @@
-/**
-  * <Preview />
-  */
-
+//src/preview.jsx
 import React from 'react';
 import update from 'immutability-helper';
 import store from './stores/store';
@@ -269,7 +266,10 @@ export default class Preview extends React.Component {
       updateElement: handleUpdateElement,
     };
 
-    return this.props.renderEditForm(formElementEditProps);
+    return this.props.renderEditForm({
+        ...formElementEditProps,
+        renderRichTextEditor: this.props.renderRichTextEditor,
+    });
   }
 
   render() {

@@ -18,6 +18,7 @@ const App = () => (
     saveUrl={saveUrl}
     locale="en"
     saveAlways={false}
+    renderRichTextEditor={(props) => <TiptapAdapter {...props} />}
     // toolbarItems={items}
   />);
 

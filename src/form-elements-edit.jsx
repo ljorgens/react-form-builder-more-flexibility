@@ -1,7 +1,11 @@
+//src/form-elements-edit.jsx
 import React from 'react';
 import TextAreaAutosize from 'react-textarea-autosize';
 import {
-    ContentState, EditorState, convertFromHTML, convertToRaw,
+    ContentState,
+    EditorState,
+    convertFromHTML,
+    convertToRaw,
 } from 'draft-js';
 import draftToHtml from 'draftjs-to-html';
 import { Editor } from 'react-draft-wysiwyg';
@@ -11,9 +15,53 @@ import { get } from './stores/requests';
 import ID from './UUID';
 import IntlMessages from './language-provider/IntlMessages';
 
-const toolbar = {
-    options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
-    inline: { inDropdown: false, options: ['bold', 'italic', 'underline', 'superscript', 'subscript'] },
+// ---------- Default RTE (DraftJS) adapter: HTML in/out ----------
+const DefaultRTE = ({ value = '', onChange, placeholder, disabled, className }) => {
+    const [state, setState] = React.useState(() => {
+        const parsed = convertFromHTML(value || '');
+        if (!parsed.contentBlocks || !parsed.contentBlocks.length) return EditorState.createEmpty();
+        const contentState = ContentState.createFromBlockArray(parsed);
+        return EditorState.createWithContent(contentState);
+    });
+
+    React.useEffect(() => {
+        const parsed = convertFromHTML(value || '');
+        if (!parsed.contentBlocks || !parsed.contentBlocks.length) {
+            setState(EditorState.createEmpty());
+            return;
+        }
+        const contentState = ContentState.createFromBlockArray(parsed);
+        setState(EditorState.createWithContent(contentState));
+    }, [value]);
+
+    const toHtml = (editorState) =>
+        draftToHtml(convertToRaw(editorState.getCurrentContent()))
+            .replace(/<p>/g, '')
+            .replace(/<\/p>/g, '')
+            .replace(/&nbsp;/g, ' ')
+            .replace(/(?:\r\n|\r|\n)/g, ' ');
+
+    const handleChange = (st) => {
+        setState(st);
+        onChange?.(toHtml(st));
+    };
+
+    const toolbar = {
+        options: ['inline', 'list', 'textAlign', 'fontSize', 'link', 'history'],
+        inline: { inDropdown: false, options: ['bold', 'italic', 'underline', 'superscript', 'subscript'] },
+    };
+
+    return (
+        <Editor
+            toolbar={toolbar}
+            editorState={state}
+            onEditorStateChange={handleChange}
+            stripPastedStyles
+            readOnly={!!disabled}
+            editorClassName={className}
+            placeholder={placeholder}
+        />
+    );
 };
 
 export default class FormElementsEdit extends React.Component {
@@ -47,18 +95,6 @@ export default class FormElementsEdit extends React.Component {
     }
 
     // ---------- helpers ----------
-    convertFromHTML = (content) => {
-        const newContent = convertFromHTML(content || '');
-        if (!newContent.contentBlocks || !newContent.contentBlocks.length) return EditorState.createEmpty();
-        const contentState = ContentState.createFromBlockArray(newContent);
-        return EditorState.createWithContent(contentState);
-    };
-
-    toHtml = (editorState) =>
-        draftToHtml(convertToRaw(editorState.getCurrentContent()))
-            .replace(/<p>/g, '').replace(/<\/p>/g, '')
-            .replace(/&nbsp;/g, ' ').replace(/(?:\r\n|\r|\n)/g, ' ');
-
     setDraftProp = (name, value) => {
         this.setState(({ draft }) => {
             const nextDraft = { ...draft, [name]: value };
@@ -78,11 +114,6 @@ export default class FormElementsEdit extends React.Component {
     editElementProp = (elemProperty, targProperty, e) => {
         const value = e?.target ? e.target[targProperty] : e; // allow direct values
         this.setDraftProp(elemProperty, value);
-    };
-
-    onEditorStateChange = (index, property, editorState) => {
-        const html = this.toHtml(editorState);
-        this.setDraftProp(property, html);
     };
 
     addOptions = () => {
@@ -127,6 +158,20 @@ export default class FormElementsEdit extends React.Component {
         const hasErrors = Object.keys(errors || {}).length > 0;
         const el = draft || {};
 
+        // pluggable RTE: prefer caller-provided, else default
+        const { renderRichTextEditor } = this.props;
+        let RTE;
+        if (typeof renderRichTextEditor === 'function') {
+            RTE = (p) => renderRichTextEditor(p);
+        } else if (renderRichTextEditor && React.isValidElement(renderRichTextEditor)) {
+            RTE = (p) => React.cloneElement(renderRichTextEditor, p);
+        } else {
+            RTE = (p) => <DefaultRTE {...p} />;
+        }
+
+        console.log("HERE: ", RTE)
+        console.log("THERE: ", this.props.renderRichTextEditor)
+
         // booleans
         const this_checked = !!el.required;
         const this_default_checked = !!el.defaultChecked;
@@ -150,30 +195,20 @@ export default class FormElementsEdit extends React.Component {
 
         const canHaveImageSize = (el.element === 'Image' || el.element === 'Camera');
 
-        const files = this.props.files.length ? [...this.props.files] : [];
+        const files = (this.props.files && this.props.files.length) ? [...this.props.files] : [];
         if (files.length < 1 || (files.length > 0 && files[0].id !== '')) {
             files.unshift({ id: '', file_name: '' });
         }
 
-        // editor states from DRAFT (not props.element)
-        let editorState;
-        let secondaryEditorState;
-        let thirdEditorState;
-        if (el.hasOwnProperty('content')) editorState = this.convertFromHTML(el.content);
-        if (el.hasOwnProperty('label')) editorState = this.convertFromHTML(el.label);
-        if (el.hasOwnProperty('boxLabel')) secondaryEditorState = this.convertFromHTML(el.boxLabel);
-        if (el.hasOwnProperty('popUpBody')) thirdEditorState = this.convertFromHTML(el.popUpBody);
-
         return (
-            <div>
+            <div className={this.props.className || 'edit-element-fields'}>
                 <div className="clearfix">
                     <h4 className="float-left">{el.text}</h4>
-                    {/* <i className="float-right fas fa-times dismiss-edit" onClick={this.cancel}></i> */}
                     <div className="d-flex justify-content-end mt-3 gap-2">
                         <button type="button" className="btn btn-secondary" onClick={this.cancel}>
                             <IntlMessages id="cancel" defaultMessage="Cancel" />
                         </button>
-                        <button style={{marginLeft: 10}} type="button" className="btn btn-primary" onClick={this.save} disabled={!dirty || hasErrors}>
+                        <button style={{ marginLeft: 10 }} type="button" className="btn btn-primary" onClick={this.save} disabled={!dirty || hasErrors}>
                             <IntlMessages id="save" defaultMessage="Save" />
                         </button>
                     </div>
@@ -184,7 +219,7 @@ export default class FormElementsEdit extends React.Component {
                     <div className="form-group">
                         <label className="control-label" htmlFor="custom_name">
                             <IntlMessages id="custom-name-label" />
-                            {el.show_custom_name && <span style={{color:'#d9534f'}}> *</span>}
+                            {el.show_custom_name && <span style={{ color: '#d9534f' }}> *</span>}
                         </label>
                         <input
                             type="text"
@@ -193,7 +228,7 @@ export default class FormElementsEdit extends React.Component {
                             id="custom_name"
                             value={el.custom_name || ''}
                             onChange={(e) => this.editElementProp('custom_name', 'value', e)}
-                            onBlur={() => this.setState(({ draft }) => ({ errors: this.validate(draft) })) }
+                            onBlur={() => this.setState(({ draft }) => ({ errors: this.validate(draft) }))}
                         />
                         {errors.custom_name && (
                             <div className="invalid-feedback" style={{ display: 'block' }}>
@@ -206,11 +241,12 @@ export default class FormElementsEdit extends React.Component {
                 {el.hasOwnProperty('content') && (
                     <div className="form-group">
                         <label className="control-label"><IntlMessages id="text-to-display" />:</label>
-                        <Editor
-                            toolbar={toolbar}
-                            defaultEditorState={editorState}
-                            onEditorStateChange={(st) => this.onEditorStateChange(0, 'content', st)}
-                            stripPastedStyles
+                        <RTE
+                            value={el.content || ''}
+                            onChange={(html) => this.setDraftProp('content', html)}
+                            placeholder=""
+                            disabled={false}
+                            className="form-control"
                         />
                     </div>
                 )}
@@ -248,11 +284,11 @@ export default class FormElementsEdit extends React.Component {
                         {!el.hide_display_label && (
                             <>
                                 <label><IntlMessages id="display-label" /></label>
-                                <Editor
-                                    toolbar={toolbar}
-                                    defaultEditorState={editorState}
-                                    onEditorStateChange={(st) => this.onEditorStateChange(0, 'label', st)}
-                                    stripPastedStyles
+                                <RTE
+                                    value={el.label || ''}
+                                    onChange={(html) => this.setDraftProp('label', html)}
+                                    disabled={false}
+                                    className="form-control"
                                 />
                             </>
                         )}
@@ -347,11 +383,11 @@ export default class FormElementsEdit extends React.Component {
                 {el.element === 'Checkbox' && (
                     <div className="form-group">
                         <label className="control-label"><IntlMessages id="checkbox-label-text" />:</label>
-                        <Editor
-                            toolbar={toolbar}
-                            defaultEditorState={secondaryEditorState}
-                            onEditorStateChange={(st) => this.onEditorStateChange(0, 'boxLabel', st)}
-                            stripPastedStyles
+                        <RTE
+                            value={el.boxLabel || ''}
+                            onChange={(html) => this.setDraftProp('boxLabel', html)}
+                            disabled={false}
+                            className="form-control"
                         />
                     </div>
                 )}
@@ -359,11 +395,11 @@ export default class FormElementsEdit extends React.Component {
                 {this_has_popup && (
                     <div className="form-group">
                         <label className="control-label">Pop Up:</label>
-                        <Editor
-                            toolbar={toolbar}
-                            defaultEditorState={thirdEditorState}
-                            onEditorStateChange={(st) => this.onEditorStateChange(0, 'popUpBody', st)}
-                            stripPastedStyles
+                        <RTE
+                            value={el.popUpBody || ''}
+                            onChange={(html) => this.setDraftProp('popUpBody', html)}
+                            disabled={false}
+                            className="form-control"
                         />
                     </div>
                 )}
@@ -642,11 +678,9 @@ export default class FormElementsEdit extends React.Component {
                         preview={this.props.preview}
                         // Wrap updateElement so options edits update the draft only
                         updateElement={(updated) => {
-                            // Some versions pass the whole element, others only mutate options inside draft
                             if (updated && updated.options) {
                                 this.setDraftProp('options', updated.options);
                             } else {
-                                // fallback: clone from current draft in case child mutated it
                                 this.setState(({ draft }) => ({ draft: { ...draft, options: [...(draft.options || [])] }, dirty: true }));
                             }
                         }}
@@ -657,4 +691,5 @@ export default class FormElementsEdit extends React.Component {
         );
     }
 }
+
 FormElementsEdit.defaultProps = { className: 'edit-element-fields' };
