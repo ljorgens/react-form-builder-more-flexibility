@@ -318,9 +318,10 @@ class Dropdown extends React.Component {
     const props = {};
     props.className = 'form-control';
     props.name = this.props.data.field_name;
+    const placeholder = this.props.data.placeholder;
 
     if (this.props.mutable) {
-      props.defaultValue = this.props.defaultValue;
+      props.defaultValue = this.props.defaultValue !== undefined ? this.props.defaultValue : (placeholder ? '' : undefined);
       props.ref = this.inputField;
     }
 
@@ -337,8 +338,13 @@ class Dropdown extends React.Component {
       <div style={{ ...this.props.style }} className={baseClasses}>
         <ComponentHeader {...this.props} />
         <div className="form-group">
-          <ComponentLabel {...this.props} />
+          {!placeholder && <ComponentLabel {...this.props} />}
           <select {...props}>
+            {placeholder && (
+              <option value="" disabled hidden>
+                {placeholder}
+              </option>
+            )}
             {this.props.data.options.map((option) => {
               const this_key = `preview_${option.key}`;
               return (

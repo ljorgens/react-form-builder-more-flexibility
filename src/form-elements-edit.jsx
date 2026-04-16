@@ -306,6 +306,28 @@ export default class FormElementsEdit extends React.Component {
                                 </label>
                             </div>
                         )}
+                        {!el.hide_required && this_checked && (
+                            <div className="form-group" style={{ marginTop: 10 }}>
+                                <label className="control-label">Required Field — Alert Header:</label>
+                                <input
+                                    type="text"
+                                    className="form-control"
+                                    value={el.requiredMessageHeader || ''}
+                                    onChange={(e) => this.editElementProp('requiredMessageHeader', 'value', e)}
+                                />
+                            </div>
+                        )}
+                        {!el.hide_required && this_checked && (
+                            <div className="form-group">
+                                <label className="control-label">Required Field — Alert Body:</label>
+                                <RTE
+                                    value={el.requiredMessageBody || ''}
+                                    onChange={(html) => this.setDraftProp('requiredMessageBody', html)}
+                                    disabled={false}
+                                    className="form-control"
+                                />
+                            </div>
+                        )}
                         {el.hasOwnProperty('readOnly') && (
                             <div className="custom-control custom-checkbox">
                                 <input
