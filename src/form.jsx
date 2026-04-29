@@ -268,7 +268,8 @@ class ReactForm extends React.Component {
       }
 
       if (this._isInvalid(item)) {
-        errors.push(`${item.label} ${intl.formatMessage({ id: 'message.is-required' })}!`);
+        const fieldName = (item.label && item.label.trim()) || item.placeholder || item.field_name;
+        errors.push(`${fieldName} ${intl.formatMessage({ id: 'message.is-required' })}!`);
       }
 
       if (item.element === 'EmailInput') {

@@ -269,6 +269,7 @@ export default class Preview extends React.Component {
     return this.props.renderEditForm({
         ...formElementEditProps,
         renderRichTextEditor: this.props.renderRichTextEditor,
+        onImageUpload: this.props.onImageUpload,
     });
   }
 

@@ -71,9 +71,40 @@ export default class FormElementsEdit extends React.Component {
             // start with a deep-ish clone so we don't mutate props.element
             draft: JSON.parse(JSON.stringify(props.element || {})),
             dirty: false,
-            errors: {}
+            errors: {},
+            uploadingImage: false,
+            imageUploadError: null,
         };
+        this.imageFileInputRef = React.createRef();
     }
+
+    handleImageFileChange = async (e) => {
+        const file = e.target.files && e.target.files[0];
+        if (!file) return;
+        const { onImageUpload } = this.props;
+        if (typeof onImageUpload !== 'function') return;
+
+        this.setState({ uploadingImage: true, imageUploadError: null });
+        try {
+            const result = await onImageUpload(file);
+            const url = typeof result === 'string'
+                ? result
+                : (result && (result.imageUrl || result.url));
+            const errorMessage = result && typeof result === 'object' ? result.error : null;
+            if (errorMessage) {
+                this.setState({ uploadingImage: false, imageUploadError: errorMessage });
+            } else if (url) {
+                this.setDraftProp('src', url);
+                this.setState({ uploadingImage: false });
+            } else {
+                this.setState({ uploadingImage: false, imageUploadError: 'Upload failed.' });
+            }
+        } catch (err) {
+            this.setState({ uploadingImage: false, imageUploadError: err?.message || 'Upload failed.' });
+        } finally {
+            if (this.imageFileInputRef.current) this.imageFileInputRef.current.value = '';
+        }
+    };
 
     validate = (draft = this.state.draft) => {
         const errors = {};
@@ -435,6 +466,59 @@ export default class FormElementsEdit extends React.Component {
                             value={el.src || ''}
                             onChange={(e) => this.editElementProp('src', 'value', e)}
                         />
+                        {el.element === 'Image' && typeof this.props.onImageUpload === 'function' && (
+                            <div style={{ marginTop: 12, display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+                                {el.src && (
+                                    <img
+                                        src={el.src}
+                                        alt=""
+                                        style={{
+                                            width: 56,
+                                            height: 56,
+                                            objectFit: 'cover',
+                                            borderRadius: 4,
+                                            border: '1px solid #dee2e6',
+                                            background: '#f8f9fa',
+                                        }}
+                                    />
+                                )}
+                                <input
+                                    ref={this.imageFileInputRef}
+                                    id="srcImageUpload"
+                                    type="file"
+                                    accept="image/png,image/jpeg,image/jpg,image/gif,image/webp"
+                                    style={{ display: 'none' }}
+                                    onChange={this.handleImageFileChange}
+                                />
+                                <button
+                                    type="button"
+                                    className="btn btn-outline-secondary btn-sm"
+                                    disabled={this.state.uploadingImage}
+                                    onClick={() => this.imageFileInputRef.current && this.imageFileInputRef.current.click()}
+                                >
+                                    {this.state.uploadingImage
+                                        ? 'Uploading…'
+                                        : (el.src ? 'Replace image' : 'Upload image')}
+                                </button>
+                                {el.src && !this.state.uploadingImage && (
+                                    <button
+                                        type="button"
+                                        className="btn btn-link btn-sm p-0"
+                                        onClick={() => this.setDraftProp('src', '')}
+                                    >
+                                        Remove
+                                    </button>
+                                )}
+                                {this.state.imageUploadError && (
+                                    <small style={{ color: '#d9534f', flexBasis: '100%' }}>
+                                        {this.state.imageUploadError}
+                                    </small>
+                                )}
+                                <small className="text-muted" style={{ flexBasis: '100%' }}>
+                                    PNG, JPG, GIF, or WebP. Max 2MB.
+                                </small>
+                            </div>
+                        )}
                     </div>
                 )}
 
@@ -611,7 +695,7 @@ export default class FormElementsEdit extends React.Component {
                     </div>
                 )}
 
-                {el.showPlaceholder && (
+                {(el.showPlaceholder || el.element === 'Dropdown') && (
                     <div className="form-group">
                         <label className="control-label" htmlFor="placeholder"><IntlMessages id="place-holder-text-label" /></label>
                         <input

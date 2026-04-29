@@ -85,6 +85,7 @@ class ReactFormBuilder extends React.Component {
                   renderEditForm={this.props.renderEditForm}
                   saveAlways={this.props.saveAlways}
                   renderRichTextEditor={this.props.renderRichTextEditor}
+                  onImageUpload={this.props.onImageUpload}
                 />
                 <Toolbar {...toolbarProps} customItems={this.props.customToolbarItems} />
               </div>
