@@ -13,6 +13,22 @@ import ComponentHeader from './component-header';
 import ComponentLabel from './component-label';
 import myxss from './myxss';
 
+// Accessible NAME for every input (WCAG H91 / F68). Operators often leave the
+// label blank and rely on the placeholder, which axe tolerates but Pa11y
+// rightly rejects (a placeholder vanishes on first keystroke). Name by the
+// visible label when there is one (aria-labelledby → ComponentLabel's id),
+// else fall back to a stable aria-label from the placeholder or a humanized
+// custom_name. Mirrors the fan side's LightFormRenderer.nameProps.
+const humanizeName = (s) =>
+  (s || '').replace(/_\d+$/, '').replace(/[_-]+/g, ' ').trim().replace(/\b\w/g, (c) => c.toUpperCase());
+const accessibleNameProps = (data = {}) => {
+  const hasVisibleLabel = !!(data.label && String(data.label).trim());
+  if (hasVisibleLabel) return { 'aria-labelledby': `${data.field_name}__label` };
+  const fallback = (data.placeholder && String(data.placeholder).trim())
+    || humanizeName(data.custom_name) || humanizeName(data.field_name);
+  return fallback ? { 'aria-label': fallback } : {};
+};
+
 const FormElements = {};
 
 class Header extends React.Component {
@@ -131,6 +147,7 @@ class TextInput extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     props.placeholder = this.props.data.placeholder;
+    Object.assign(props, accessibleNameProps(this.props.data));
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -169,6 +186,7 @@ class EmailInput extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     props.placeholder = this.props.data.placeholder;
+    Object.assign(props, accessibleNameProps(this.props.data));
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -207,6 +225,7 @@ class PhoneNumber extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     props.placeholder = this.props.data.placeholder;
+    Object.assign(props, accessibleNameProps(this.props.data));
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -245,6 +264,7 @@ class NumberInput extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     props.placeholder = this.props.data.placeholder;
+    Object.assign(props, accessibleNameProps(this.props.data));
     if (this.props.mutable) {
       props.defaultValue = this.props.defaultValue;
       props.ref = this.inputField;
@@ -282,6 +302,7 @@ class TextArea extends React.Component {
     props.className = 'form-control';
     props.name = this.props.data.field_name;
     props.placeholder = this.props.data.placeholder;
+    Object.assign(props, accessibleNameProps(this.props.data));
     if (this.props.read_only) {
       props.disabled = 'disabled';
     }
@@ -608,9 +629,14 @@ class Checkbox extends React.Component {
             <input
               className="form-check-input"
               id={this.props.data.field_name}
+              // Named by the box label via aria-labelledby, not htmlFor — the
+              // box label's onClick opens the rules popup and must not toggle
+              // the box (H91.InputCheckbox.Name).
+              aria-labelledby={`${this.props.data.field_name}__boxlabel`}
               {...props}
             />
             <label
+              id={`${this.props.data.field_name}__boxlabel`}
               className="form-check-label"
               onClick={this.handleLabelClick}
               dangerouslySetInnerHTML={{ __html: this.props.data.boxLabel }}

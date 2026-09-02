@@ -13,6 +13,10 @@ const ComponentLabel = (props) => {
 
   return (
     <label
+      // id so the paired input can name itself via aria-labelledby (H91/F68):
+      // the label's onClick opens the rules popup for hasPopUp items, so
+      // htmlFor would wrongly focus the field — name by reference instead.
+      id={props.data.field_name ? `${props.data.field_name}__label` : undefined}
       onClick={hasPopUp ? props.passUpClick : undefined} // Pass the function reference instead of invoking it
       className={props.className || 'form-label'}
       style={{ marginTop: '0.5rem' }}
